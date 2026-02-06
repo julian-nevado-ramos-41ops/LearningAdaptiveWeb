@@ -167,6 +167,205 @@ body {
 }
 
 /* ============================================
+   Section 14 - Bento Grid Layout
+   ============================================ */
+.section-14 {
+    background-color: var(--color-4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    padding-right: 80px;
+    /* Space for navigation dots */
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.section-14 .section-content.full-width {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.section-mini-title {
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* CONTAINER - ACORDEON */
+.bento-container {
+    display: flex;
+    gap: 12px;
+    width: 95%;
+    height: 70vh;
+    margin-left: 50px;
+}
+
+.bento-container .card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    background: var(--card-bg, #0d0d0d);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    /* CRITICAL: Prevent content from affecting flex size */
+    min-width: 0;
+}
+
+.bento-container .card.expanded {
+    flex: 3;
+}
+
+/* COLLAPSED STATE */
+.bento-container .card.collapsed {
+    flex: 0.4;
+    /* Narrow strip */
+    background: #111;
+    align-items: center;
+    justify-content: center;
+}
+
+.bento-container .card.collapsed:hover {
+    background: #1a1a1a;
+}
+
+/* CONTENT VISIBILITY */
+.card-content {
+    padding: 40px 60px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 10%;
+    /* AJUSTA ESTE VALOR: menor = más arriba */
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    max-width: 600px;
+    /* Narrower content */
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Hide content when collapsed */
+.bento-container .card.collapsed .card-content {
+    display: none;
+}
+
+/* VERTICAL TITLE (visible when collapsed) - BOTTOM POSITION */
+.vertical-title {
+    position: absolute;
+    bottom: 170px;
+    /* AJUSTA ESTE VALOR: mayor = más arriba del borde */
+    left: 50%;
+    transform: translateX(-50%) rotate(-90deg);
+    white-space: nowrap;
+    font-size: 1.8rem;
+    /* AJUSTA TAMAÑO AQUÍ */
+    font-weight: 500;
+    color: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.bento-container .card.collapsed .vertical-title {
+    opacity: 1;
+}
+
+/* TYPOGRAPHY */
+.bento-container h2 {
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 1.5rem 0;
+    font-family: var(--font-heading);
+}
+
+/* BULLET LISTS */
+.bento-container .bento-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bento-container .bento-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+.bento-container .bento-list li::before {
+    content: '↓';
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 3px;
+}
+
+/* LEARN MORE LINK */
+.bento-container .learn-more {
+    margin-top: auto;
+    color: #0099ff;
+    text-decoration: underline;
+    font-size: 14px;
+    cursor: pointer;
+    padding-top: 20px;
+}
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+    .section-14 {
+        padding: 20px;
+        padding-right: 20px;
+    }
+
+    .bento-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .bento-container .card,
+    .bento-container .card.collapsed,
+    .bento-container .card.expanded {
+        flex: none;
+        height: 200px;
+        width: 100%;
+    }
+
+    .bento-container .card.expanded {
+        height: 400px;
+    }
+
+    .vertical-title {
+        display: none;
+    }
+
+    .bento-container .card.collapsed .card-content {
+        display: flex;
+    }
+
+    .card-content {
+        padding: 30px;
+    }
+}
+
+
+/* ============================================
    Section Content
    ============================================ */
 .section-content {

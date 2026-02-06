@@ -9,12 +9,12 @@ description: Genera directorios .agent/skills/ de alta calidad, predecibles y ef
 
 - Cuando el usuario pida crear una nueva skill.
 - Cuando el usuario quiera definir nuevas capacidades para el agente.
--Cuando se necesite estandarizar un flujo de trabajo en un formato reutilizable.
+- Cuando se necesite estandarizar un flujo de trabajo en un formato reutilizable.
 
 ## Flujo de trabajo
 
 - [ ] Analizar los requisitos del usuario para la nueva skill.
-- [ ] Determinar en nombre en gerunio (ej. 'testing-code')
+- [ ] Determinar en nombre en gerundio (ej. 'testing-code')
 - [ ] Generar la estructura de carpetas: '<skill-name>/', 'SKILL.md', 'scripts/', 'examples/', 'resources/'.
 - [ ] Crear el archivo SKILL.md siguiendo estrictamente la plantilla y reglas de frontmatter.
 - [ ] Validar que el contenido sea conciso, siga la divulgación progresiva y use los grados de libertad adecuados.

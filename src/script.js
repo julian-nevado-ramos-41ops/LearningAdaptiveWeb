@@ -164,20 +164,16 @@ document.addEventListener('DOMContentLoaded', function () {
      * Initialize everything
      */
     function init() {
-        // Observe all sections
         sections.forEach(section => {
             sectionObserver.observe(section);
         });
 
-        // Add click listeners to nav dots
         navDots.forEach(dot => {
             dot.addEventListener('click', handleNavClick);
         });
 
-        // Add keyboard navigation
         document.addEventListener('keydown', handleKeyboard);
 
-        // Set initial section as visible
         if (sections[0]) {
             sections[0].classList.add('visible');
         }
@@ -281,6 +277,27 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('touchstart', startPress, { passive: false });
         btn.addEventListener('touchend', cancelPress);
     }
+
+    // ============================================
+    // Bento Grid Interaction (Section 14)
+    // ============================================
+    const bentoCards = document.querySelectorAll('.bento-container .card');
+
+    bentoCards.forEach(card => {
+        card.addEventListener('click', () => {
+            if (card.classList.contains('expanded')) return;
+
+            // Close others
+            bentoCards.forEach(c => {
+                c.classList.remove('expanded');
+                c.classList.add('collapsed');
+            });
+
+            // Open clicked
+            card.classList.remove('collapsed');
+            card.classList.add('expanded');
+        });
+    });
 
     init();
 });

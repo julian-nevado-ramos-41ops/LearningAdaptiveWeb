@@ -11,12 +11,15 @@ import { LogoCarouselComponent } from './components/logo-carousel/logo-carousel.
 import { PreloaderComponent } from './components/preloader/preloader.component';
 import { HudOverlayComponent } from './components/hud-overlay/hud-overlay.component';
 import { NavBarComponent, NavCommand } from './components/nav-bar/nav-bar.component';
+import { PartStwComponent } from './components/part-stw/part-stw.component';
+import { CollapsibleListComponent, CollapsibleItem } from './components/collapsible-list/collapsible-list.component';
 
 interface SectionData {
   id: number;
   title: string;
   subtitle: string;
   backgroundColor: string;
+  image?: string;
 }
 
 @Component({
@@ -28,12 +31,14 @@ interface SectionData {
     SectionsContainerComponent,
     SectionComponent,
     AccordionComponent,
+    CollapsibleListComponent,
     AccordionCardComponent,
     CursorFollowerComponent,
     AwardsListComponent,
     LogoCarouselComponent,
     PreloaderComponent,
     HudOverlayComponent,
+    PartStwComponent,
   ],
   template: `
     <app-preloader />
@@ -50,7 +55,7 @@ interface SectionData {
     />
 
     <app-hero 
-      title="THE FUTURE-PROOFED GROUP" 
+      title="<div>THE</div><div>FUTURE-PROOFED GROUP</div>" 
       subtitle="SciTheWorld" 
       [showBrackets]="true"
       bracketsColor="var(--color-1)"
@@ -60,6 +65,8 @@ interface SectionData {
 
     <app-accordion
       mode="scroll"
+      sectionTitle="HIGHLIGHTS"
+      sectionSubtitle="Plenty of achievements"
       [cards]="accordionCards()"
       minWidth="60%"
       maxWidth="90%"
@@ -83,43 +90,13 @@ interface SectionData {
           [title]="section.title"
           [subtitle]="section.subtitle"
           [backgroundColor]="section.backgroundColor"
-        />
+          [image]="section.image"
+        >
+          @if (section.id === 3) {
+            <app-collapsible-list [items]="ecosystemItems()" />
+          }
+        </app-section>
       }
-
-      <app-section
-        [id]="15"
-        title=""
-        subtitle=""
-        backgroundColor="#EECA46"
-        [isAccordionSection]="true"
-      >
-        <app-accordion mode="click" [blockCount]="2" height="70%">
-          <app-accordion-card
-            title="What this is"
-            [expanded]="expandedCard() === 0"
-            (clicked)="setExpandedCard(0)"
-          >
-            <ul class="bento-list">
-              <li>a way for the less techie and quantitative to gain judgement and keep up with tech and AI advances;</li>
-              <li>a continuous system that evolves with you, a companion for the rest of your career;</li>
-              <li>a traceable portfolio of skills, risks, and options over time;</li>
-              <li>a way to navigate change gradually, deliberately, and intelligently; and</li>
-              <li>in the limit, for those that qualify, a technology partner as co-investor for certain members of the community that feel the need to become entrepreneurs.</li>
-            </ul>
-          </app-accordion-card>
-          <app-accordion-card
-            title="What this is not"
-            [expanded]="expandedCard() === 1"
-            (clicked)="setExpandedCard(1)"
-          >
-            <ul class="bento-list">
-              <li>a single course;</li>
-              <li>a one-off coaching interaction; nor</li>
-              <li>a reskilling panic button.</li>
-            </ul>
-          </app-accordion-card>
-        </app-accordion>
-      </app-section>
     </app-sections-container>
 
     <div class="awards-block">
@@ -186,15 +163,15 @@ export class AppComponent {
 
   accordionCards = signal<AccordionCardData[]>([
     {
-      title: 'Extreme-efficient nation, following our DNA',
+      title: 'Extreme-efficient nation',
       description: 'In 2025, we became the first company to be trusted to change a whole country - Spain. \n\nIt was based on our AI-geostrategy paper and involved the Ministry of Economy (bottom-up guidance of the economic policy; \n\nFirst things first - we established a methodology to help all companies detect and prioritize their transformation projects. Actually, one of the least advanced challenges to date.',
       icon: '',
       backgroundColor: 'rgba(232, 93, 4, 0.85)',
       testimonials: [
         {
-          name: 'Victor Ausín',
-          role: "Director'25",
-          quote: 'The paper was a discovery - there was already so much sound literature and technology anticipated by SciTheWorld that following their lead was a mere risk-reward optimization. More than 3k companies in the scope.',
+          name: 'EU Country',
+          role: "Sr Civil Servant' 25",
+          quote: "The paper was a discovery - there was already so much sound literature and technology anticipated by SciTheWorld that following their lead was a mere risk-reward optimization. More than 3k companies in the scope.",
         },
       ],
     },
@@ -218,13 +195,13 @@ Data MAPs Algorithmization requires an optimal weighting between business and te
       ],
       testimonials: [
         {
-          name: 'Jonathan Joaquín',
-          role: "Director'24",
-          quote: 'We saw the potential early and started together the transformation of our Asset Manager - 50% reduction',
+          name: 'IBEX Bank',
+          role: "SVP'24",
+          quote: 'We saw the potential early and started together the transformation of our Asset Manager - 50% personnel reduction followed',
         },
         {
-          name: 'Ildefonso Sánchez',
-          role: "Director'25",
+          name: 'Global Energy Company',
+          role: "Regional head of trading'25",
           quote: "It took us time to understand SciTheWorld's proposition but their track record was pristine and their approach gradual and realistic. We are ready to push for the whole lot - up to speedboats.",
         },
       ],
@@ -236,7 +213,7 @@ Data MAPs Algorithmization requires an optimal weighting between business and te
       backgroundColor: 'rgba(59, 25, 180, 0.85)',
       testimonials: [
         {
-          name: 'Natalia Cassinello',
+          name: 'Tier one university',
           role: "Professor'26",
           quote: 'We were utterly surprised by the capacity they had to see crystal clear the roadmap in innovation. Thus, we had no other choice but to create a partnership to better understand and value companies in a world where intangibles (e.g. innovation) is the engine.',
         },
@@ -245,19 +222,44 @@ Data MAPs Algorithmization requires an optimal weighting between business and te
   ]);
 
   sections = signal<SectionData[]>([
-    { id: 1, title: 'About us', subtitle: 'WELL BEYOND EDUCATION', backgroundColor: '#4AB5EA' },
-    { id: 2, title: 'The problem we solve', subtitle: 'STATIC OR REACTIVE ARE TOO RISKY', backgroundColor: '#FA715E' },
-    { id: 3, title: 'What this is and this is not', subtitle: 'WE ARE KEEN ON DISRUPTION, NOT ON THE BUSINESS OF EDUCATION', backgroundColor: '#4CD6BC' },
-    { id: 4, title: 'Carrer HEDGING, NOT GAMBLING', subtitle: 'PROFESSIONALS OF RISK-REWARD', backgroundColor: '#EECA46' },
-    { id: 5, title: 'The method: follow, evolve, deviate', subtitle: 'WHAT WE EXPECT FROM YOU', backgroundColor: '#FD5F65' },
-    { id: 6, title: 'From degrees to resilience', subtitle: "4Y AT UNI CAN'T HAVE SUCH A LONG-RUN EFFECT IN YOUR CAREER", backgroundColor: '#4AB5EA' },
-    { id: 7, title: 'From skills to opportunities', subtitle: "4Y AT UNI CAN'T HAVE SUCH A LONG-RUN EFFECT IN YOUR CAREER", backgroundColor: '#FA715E' },
-    { id: 8, title: 'Why systematizing a competitive advantage?', subtitle: 'NOT ONLY ABOUT SOCIAL IMPACT', backgroundColor: '#4CD6BC' },
-    { id: 9, title: 'How learning works with us', subtitle: 'CONNECTING CONCEPTS THAT HAVE TRADITIONALLY BEEN FAR APART', backgroundColor: '#EECA46' },
-    { id: 10, title: 'Custom', subtitle: "IT'S ALL ABOUT YOU", backgroundColor: '#FD5F65' },
-    { id: 11, title: 'Who this is for', subtitle: 'VERY SPECIAL PEOPLE', backgroundColor: '#4AB5EA' },
-    { id: 12, title: 'Radically honest', subtitle: 'WE WISH THERE WERE GUARANTEES', backgroundColor: '#FA715E' },
-    { id: 13, title: 'In one sentence', subtitle: 'YOU HAVE FOLLOWED OUR FIRST PILL', backgroundColor: '#4CD6BC' },
+    { id: 1, title: 'Extreme-Efficient Group', subtitle: '', backgroundColor: '#4AB5EA', image: 'img/Extreme-Efficient_group.png' },
+    { id: 2, title: 'State-of-the-Art Platforms', subtitle: '', backgroundColor: '#FA715E', image: 'img/state_of_the_art_platforms.png' },
+    { id: 3, title: 'Ecosystem', subtitle: '', backgroundColor: '#4CD6BC' },
+    { id: 4, title: 'World-Class Vision', subtitle: '', backgroundColor: '#EECA46' },
+    { id: 5, title: 'In a sentence', subtitle: '', backgroundColor: '#FD5F65' }
+  ]);
+
+  ecosystemItems = signal<CollapsibleItem[]>([
+    {
+      title: 'Learning-Adaptative: Challenges',
+      subtitle: 'We agree with Jimmy Simons on the opinion that the most complex of all challenges is that of trading.',
+      content: 'L~A is where our co-founders manage their investments (“their Family Office”). And, more importantly, where they keep updating their algorithmic technology challenges at the bleeding-edge.',
+      image: 'img/chistera.png'
+    },
+    {
+      title: 'Algorithmization: Solutions',
+      subtitle: 'We agree with Andrew Ng on the opinion that the ability to innovate can be systematized.',
+      content: 'In this Center of Excellence we  create use cases that prove innovation can become business-as-usual so that extreme-efficiency can be unlocked. We publish our work to get exposed to academia and industry and grant rigour. The method has proved to be efficient itself - great byproducts include the pioneering of both Agentic AI (strategies-based) and Software-as-a-Service (Custom SaaS).',
+      image: 'img/birrete.png'
+    },
+    {
+      title: '41OPS: Execution',
+      subtitle: 'We agree with Elon Musk on the opinion that the factory is the product - the real deal.',
+      content: 'Here is where we underpin Algorithmization’s theory by unlocking it at companies that gradually become white collar factories upon our Extended Production Architectures (EPAs).',
+      image: 'img/casco.png'
+    },
+    {
+      title: 'SystematicMe: Training',
+      subtitle: 'We agree with Taleb on the relevance of being Antifragile.',
+      content: 'Here is where our co-founders disrupt themselves by letting others follow their path. It is a career management system that allows professionals update their skills timely so that they keep active in the job market. Uniquely, in the limit, we can become the tech companions of those who are forced to leave the job market and need to create their own opportunities.',
+      image: 'img/peluca.png'
+    },
+    {
+      title: 'An army of spin-offs: Scale',
+      subtitle: 'We agree with Ana Botín on the relevance of speedboats to accelerate transformation beyond the legacies of a large company.',
+      content: 'Here is where we launch independent spin-offs as venture tech - equity in exchange of technology. Whether with our clients (joint ventures as speedboats), with our employees or with external professionals trained through SystematicMe.\nThe beauty of this companies is their attractive risk-reward ratio. This is, they are borned timely and with maximal EPA - AI-native OPS, low-risk tech and no production-architecture legacies',
+      image: 'img/Ecosystem_to_cut.png'
+    }
   ]);
 
   sectionsContainerRef = viewChild<SectionsContainerComponent>('sectionsContainer');

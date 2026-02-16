@@ -1,0 +1,87 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.stw-container {
+    padding: 60px 5%;
+    display: flex;
+    justify-content: center;
+    background-color: var(--stw-bg-color, #F3F1E7);
+    /* Fallback */
+}
+
+.content-wrapper {
+    max-width: 1400px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 80px;
+}
+
+.title-col {
+    flex: 1;
+    max-width: 50%;
+}
+
+.desc-col {
+    flex: 1;
+    max-width: 50%;
+    /* Align with the baseline of the first line of the title? No, usually top aligned. */
+    /* Adjust as needed for visual balance */
+    padding-top: 1.5rem;
+    /* Optical adjustment */
+}
+
+.stw-title {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.03em;
+}
+
+/* Style for underlined text passed via innerHTML */
+::ng-deep .stw-title u,
+::ng-deep .stw-title span.underline {
+    text-decoration: none;
+    border-bottom: 4px solid currentColor;
+    font-style: normal;
+    padding-bottom: 2px;
+    display: inline-block;
+    line-height: inherit;
+}
+
+.stw-description {
+    font-size: 1rem;
+    /* Larger than default */
+    line-height: 1.6;
+    font-weight: 400;
+    margin: 0;
+    opacity: 0.95;
+    letter-spacing: -0.01em;
+}
+
+@media (max-width: 900px) {
+    .content-wrapper {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .title-col,
+    .desc-col {
+        flex: auto;
+        max-width: 100%;
+        padding-top: 0;
+    }
+
+    .stw-title {
+        font-size: clamp(2.5rem, 8vw, 4rem);
+    }
+
+    .stw-description {
+        font-size: 1.25rem;
+    }
+}

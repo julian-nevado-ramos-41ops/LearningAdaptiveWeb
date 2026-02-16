@@ -40,7 +40,7 @@ import {
       color: #000000;
       font-size: 18px;
       letter-spacing: 0.2em;
-      font-weight: 700;
+      font-weight: 400;
       white-space: nowrap;
     }
 

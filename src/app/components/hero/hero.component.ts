@@ -21,7 +21,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
           }
         </p>
       }
-      <h2 class="hero-title">{{ title() }}</h2>
+      <h2 class="hero-title" [innerHTML]="title()"></h2>
       
       @if (description()) {
         <p class="hero-description"
@@ -44,6 +44,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       position: relative;
       overflow: hidden;
       scroll-snap-align: start;
+      margin-top: 5%;
     }
 
     .hero-content {
@@ -71,13 +72,55 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
     }
 
     .hero-title {
-      font-family: 'Helvetica Neue', 'Arial', sans-serif;
-      font-size: clamp(3rem, 10vw, 8rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
+      font-family: 'Bebas Neue', sans-serif; /* Gorda y condensada */
+      font-size: clamp(3rem, 10vw, 8rem); /* Smaller responsive sizing */
+      font-weight: 400; /* Bebas Neue is practically bold by default */
+      letter-spacing: 0.02em;
+      line-height: 0.9; /* Tighter vertical stacking */
       color: #1a1a1a;
       margin: 0;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column; /* Stack lines vertically */
+      align-items: flex-start; /* Align stacking */
+    }
+
+    /* Style specifically the divs passed in title() */
+    ::ng-deep .hero-title > div {
+       display: block;
+    }
+
+    ::ng-deep .sacramento-regular {
+      font-family: "Sacramento", cursive !important;
+      font-weight: 400;
+      font-style: normal;
+      text-transform: none;
+      font-size: 1.25em;
+      line-height: 0.8;
+      display: inline-block;
+      margin-right: 0.1em;
+    }
+
+    ::ng-deep .indie-flower-regular {
+      font-family: "Indie Flower", cursive !important;
+      font-weight: 400;
+      font-style: normal;
+      text-transform: none;
+      font-size: 1em;
+      line-height: 1;
+      display: inline-block;
+      margin-right: 0.1em;
+    }
+
+    ::ng-deep .shadows-into-light-regular {
+      font-family: "Shadows Into Light", cursive !important;
+      font-weight: 400;
+      font-style: normal;
+      text-transform: none;
+      font-size: 0.9em;
+      line-height: 1;
+      display: inline-block;
+      margin-right: 0.1em;
     }
 
     .hero-subtitle {
@@ -92,7 +135,7 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
       font-family: 'Helvetica Neue', 'Arial', sans-serif;
       font-weight: 400;
       line-height: 1.6;
-      margin-top: 2rem;
+      margin-top: 6rem;
       max-width: 600px;
     }
     

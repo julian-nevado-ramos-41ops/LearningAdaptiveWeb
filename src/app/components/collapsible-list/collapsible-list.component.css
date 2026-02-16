@@ -1,0 +1,173 @@
+/* ========================================
+   Collapsible List — Full-width Expand
+   Title row is compact. Expanded content
+   drops below spanning the full width
+   with generous text sizing.
+   ======================================== */
+
+.collapsible-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* --- Each Row --- */
+.collapsible-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    transition: background-color 0.3s ease;
+}
+
+.collapsible-row:last-child {
+    border-bottom: none;
+}
+
+.collapsible-row:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.collapsible-row.active {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+/* --- Row Header (clickable title) --- */
+.row-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    padding: 1.25rem 0;
+}
+
+.collapsible-row:hover .row-header,
+.collapsible-row.active .row-header {
+    opacity: 1;
+}
+
+.plus-icon {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: #ffffff;
+    min-width: 1.6rem;
+    text-align: center;
+    line-height: 1;
+    user-select: none;
+}
+
+.item-title {
+    font-family: 'Bebas Neue', 'Impact', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* --- Expanded Content Area --- */
+.row-content {
+    padding: 1.5rem 0 2.5rem 2.6rem;
+    /* Left-pad aligns with title text (icon width + gap) */
+    animation: fadeSlideDown 0.35s ease-out forwards;
+}
+
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Detail Layout: Text + Image side by side --- */
+.detail-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    align-items: center;
+    width: 100%;
+}
+
+/* --- Text Content --- */
+.text-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 1.5rem 0;
+    line-height: 1.35;
+}
+
+.bracket {
+    opacity: 0.5;
+    margin: 0 4px;
+    font-weight: 300;
+}
+
+.item-paragraph {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.7;
+}
+
+/* --- Image Content --- */
+.image-content {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: -10%;
+}
+
+.item-image {
+    width: auto;
+    height: auto;
+    max-width: 350px;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+/* --- Mobile --- */
+@media (max-width: 900px) {
+    .detail-layout {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .row-content {
+        padding-left: 0;
+    }
+
+    .image-content {
+        margin-right: 0;
+        justify-content: center;
+    }
+
+    .item-image {
+        max-width: 160px;
+        max-height: 160px;
+    }
+
+    .item-subtitle {
+        font-size: 1rem;
+    }
+
+    .item-paragraph {
+        font-size: 1rem;
+    }
+}

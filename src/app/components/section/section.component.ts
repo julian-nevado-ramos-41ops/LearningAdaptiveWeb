@@ -12,16 +12,25 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
     '[id]': '"section-" + id()',
   },
   template: `
-    <div class="section-content" [class.full-width]="isAccordionSection() || fullWidth()">
+    <div class="section-content" [class.full-width]="isAccordionSection() || fullWidth()" [class.has-image]="image()" [class.align-start]="!image()">
       @if (!isAccordionSection()) {
-        <h1 class="section-title">{{ title() }}</h1>
-        @if (subtitle()) {
-          <p class="section-subtitle">{{ subtitle() }}</p>
+        <div class="text-container">
+          <h1 class="section-title">{{ title() }}</h1>
+          @if (subtitle()) {
+            <p class="section-subtitle">{{ subtitle() }}</p>
+          }
+        </div>
+        @if (image()) {
+          <div class="section-image-container">
+            <img [src]="image()" [alt]="title()" class="section-image">
+          </div>
         }
       } @else {
         <h3 class="section-mini-title">{{ title() }}</h3>
       }
-      <ng-content />
+      <div class="content-slot">
+        <ng-content />
+      </div>
     </div>
   `,
   styles: [`
@@ -32,14 +41,17 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       justify-content: flex-start;
       align-items: center;
       padding-left: 10%;
+      padding-right: 0;
       position: relative;
       overflow: hidden;
       scroll-snap-align: start;
       scroll-snap-stop: always;
+      box-sizing: border-box;
     }
 
     :host.full-width-section {
       padding-left: 0;
+      padding-right: 0;
       justify-content: center;
     }
 
@@ -67,12 +79,47 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
     .section-content {
       text-align: left;
       padding: 2rem 0;
-      max-width: 600px;
+      width: 100%;
+      max-width: 1400px; 
       margin-right: auto;
       margin-left: 0;
       opacity: 1;
       transform: translateY(0);
+      display: flex;
+      flex-direction: row; /* Always row on desktop */
+      align-items: center; /* Default center for image sections */
+      justify-content: space-between;
+      gap: 4rem;
     }
+
+    .section-content.align-start {
+      flex-direction: column; /* Stack title and content vertically */
+      align-items: flex-start;
+      justify-content: flex-start;
+      justify-content: flex-start;
+      gap: 2rem; /* Reduced margin back to avoid pushing content too far */
+    }
+
+    .section-content.align-start .text-container {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      position: static; /* Remove sticky behavior */
+      flex: 0 0 auto;
+    }
+
+    .section-content.align-start .content-slot {
+      width: 100%;
+      flex: 1;
+    }
+
+    .section-content.has-image {
+      max-width: none; /* Let image sections span full width to reach right edge */
+      margin-right: 0;
+      padding-right: 0;
+    }
+    
+    /* Removed .has-image specific rule as we want it consistent */
 
     :host.visible .section-content {
       /* Visible state - same as default now */
@@ -88,29 +135,57 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       flex-direction: column;
       justify-content: center;
       overflow: hidden;
+      /* Reset specific image styles if full width is used differently, 
+         but currently full-width is mainly for accordion */
+    }
+
+    .text-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 300px;
+      max-width: 45%; 
+      flex-shrink: 0; /* Prevent shrinking/shifting */
+      position: sticky; /* Keep it in view if list is long */
+      top: 10vh;
     }
 
     .section-title {
       font-family: 'Bebas Neue', 'Impact', sans-serif;
-      font-size: clamp(2rem, 10vw, 8rem);
+      font-size: clamp(2rem, 8vw, 7rem); /* Slightly adjusted */
       font-weight: 400;
       letter-spacing: 0.05em;
       line-height: 0.9;
       text-transform: uppercase;
       color: #ffffff;
-      transition-delay: 1s;
+      margin: 0;
     }
 
     .section-subtitle {
       font-family: 'Inter', sans-serif;
-      font-size: clamp(0.875rem, 2vw, 2rem);
+      font-size: clamp(0.875rem, 1.5vw, 1.5rem);
       font-weight: 300;
       letter-spacing: 0.3em;
       text-transform: uppercase;
       color: #ffffff;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       opacity: 0.9;
-      transition-delay: 0.2s;
+    }
+
+    .section-image-container {
+      flex: 1.5; /* Give more space to image relative to text */
+      display: flex;
+      justify-content: flex-end; 
+      min-width: 50%; /* Ensure it takes space */
+      margin-right: -20%; /* Pull strongly to the right */
+    }
+
+    .section-image {
+      max-width: 100%;
+      max-height: 60vh; 
+      height: auto;
+      object-fit: contain;
     }
 
     .section-mini-title {
@@ -121,12 +196,48 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       margin-bottom: 1.5rem;
       color: rgba(255, 255, 255, 0.6);
     }
+
+    @media (max-width: 900px) {
+      .section-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2rem;
+      }
+      
+      .text-container {
+        max-width: 100%;
+      }
+      
+      .section-image-container {
+        max-width: 100%;
+        justify-content: center;
+        width: 100%;
+      }
+      
+      .section-image {
+        max-height: 40vh;
+      }
+
+      .content-slot {
+        width: 100%;
+      }
+
+      :host {
+        padding-right: 10%; /* Reset padding on mobile */
+      }
+    }
+    
+    .content-slot {
+      flex: 1;
+      min-width: 300px;
+    }
   `],
 })
 export class SectionComponent {
   id = input.required<number>();
   title = input.required<string>();
   subtitle = input('');
+  image = input<string | undefined>();
   backgroundColor = input('var(--color-1)');
   isAccordionSection = input(false, { transform: booleanAttribute });
   fullWidth = input(false, { transform: booleanAttribute });

@@ -11,6 +11,16 @@
 @if (mode() === 'scroll') {
 <section class="scroll-section" [style.height]="sectionHeight()" [style.--sa-font]="fontFamily()">
     <div class="sticky-wrapper">
+        @if (sectionTitle() || sectionSubtitle()) {
+        <div class="section-header">
+            <div class="title-with-brackets">
+                <span class="bracket">[</span>
+                @if (sectionTitle()) { <h2 class="section-title">{{ sectionTitle() }}</h2> }
+                <span class="bracket">]</span>
+            </div>
+            @if (sectionSubtitle()) { <p class="section-subtitle">{{ sectionSubtitle() }}</p> }
+        </div>
+        }
         <div class="scroll-cards-container" [style.width]="currentWidth" [style.gap]="gap()"
             [style.--sa-radius]="borderRadius()" [style.--sa-text-color]="textColor()">
 
@@ -22,7 +32,7 @@
                 <!-- Title shown vertically when collapsed -->
                 <div class="vertical-title">{{ card.title }}</div>
 
-                <div class="card-content" [class.card-content-with-map]="card.markers?.length">
+                <div class="card-content" [class.card-content-with-map]="card.markers?.length || card.images?.length">
                     <!-- Left column: text & actions -->
                     <div class="card-text-col" (click)="$event.stopPropagation()">
                         @if (card.icon) {
@@ -78,10 +88,21 @@
                         }
                     </div>
 
-                    <!-- Right column: interactive map -->
-                    @if (card.markers?.length) {
-                    <div class="card-map-col" (click)="$event.stopPropagation()">
+                    <!-- Right column: visuals (map or images) -->
+                    @if (card.markers?.length || card.images?.length) {
+                    <div class="card-visual-col" (click)="expandedScrollCard() === i ? $event.stopPropagation() : null">
+                        @if (card.markers?.length) {
                         <app-interactive-map [markers]="card.markers!" />
+                        }
+
+                        @if (card.images?.length) {
+                        <div [class]="'images-stack ' + (card.imagesStackClass || '')">
+                            @for (img of card.images; track img.src) {
+                            <img [src]="img.src" [alt]="img.alt" [class.is-overlay]="img.isOverlay"
+                                [class]="img.class || ''">
+                            }
+                        </div>
+                        }
                     </div>
                     }
                 </div>

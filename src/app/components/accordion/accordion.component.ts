@@ -32,6 +32,13 @@ export interface Testimonial {
     quote: string;
 }
 
+export interface AccordionImage {
+    src: string;
+    alt: string;
+    isOverlay?: boolean;
+    class?: string;
+}
+
 export interface AccordionCardData {
     title: string;
     description: string;
@@ -43,6 +50,10 @@ export interface AccordionCardData {
     llmLinks?: LlmLink[];
     /** Map markers to display on the interactive map */
     markers?: MapMarker[];
+    /** Images to display in the visual column */
+    images?: AccordionImage[];
+    /** Custom class for the images stack container */
+    imagesStackClass?: string;
     /** Testimonials shown below the LLM buttons */
     testimonials?: Testimonial[];
 }
@@ -108,6 +119,12 @@ export class AccordionComponent implements AfterViewInit, OnDestroy {
     // ─── Scroll-mode Inputs ────────────────────────────────
     /** Data-driven cards for scroll mode */
     cards = input<AccordionCardData[]>([]);
+
+    /** Optional title for the scroll section */
+    sectionTitle = input<string>('');
+
+    /** Optional subtitle for the scroll section */
+    sectionSubtitle = input<string>('');
 
     /** Minimum width of the cards container (scroll mode) */
     minWidth = input<string>('60%');

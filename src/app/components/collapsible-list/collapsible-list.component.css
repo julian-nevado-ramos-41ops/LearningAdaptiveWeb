@@ -122,6 +122,8 @@
     font-weight: 500;
     color: #ffffff;
     line-height: 1.7;
+    white-space: pre-wrap;
+    /* Preserve line breaks */
 }
 
 /* --- Image Content --- */

@@ -6,6 +6,7 @@ export interface NavCommand {
     action?: () => void;
     link?: string;
     icon?: string;
+    children?: NavCommand[];
 }
 
 export interface NavLogo {

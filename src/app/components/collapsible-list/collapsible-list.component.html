@@ -9,14 +9,18 @@
         <div class="row-content">
             <div class="detail-layout">
                 <div class="text-content">
+                    @if (item.subtitle) {
                     <h4 class="item-subtitle">
                         <span class="bracket">[</span>{{ item.subtitle }}<span class="bracket">]</span>
                     </h4>
+                    }
                     <div class="item-paragraph">{{ item.content }}</div>
                 </div>
+                @if (item.image) {
                 <div class="image-content">
                     <img [src]="item.image" [alt]="item.title" class="item-image" loading="lazy">
                 </div>
+                }
             </div>
         </div>
         }

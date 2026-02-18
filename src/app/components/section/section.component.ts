@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute, output } from '@angular/core';
 
 @Component({
   selector: 'app-section',
@@ -7,26 +7,33 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
     'class': 'section',
     '[class.visible]': 'isVisible()',
     '[class.folded]': 'isFolded()',
-    '[class.full-width-section]': 'isAccordionSection() || fullWidth()',
+    '[class.full-width-section]': 'fullWidth()',
     '[style.background-color]': 'backgroundColor()',
+    '[style.color]': 'textColor()',
     '[id]': '"section-" + id()',
   },
   template: `
-    <div class="section-content" [class.full-width]="isAccordionSection() || fullWidth()" [class.has-image]="image()" [class.align-start]="!image()">
-      @if (!isAccordionSection()) {
-        <div class="text-container">
-          <h1 class="section-title">{{ title() }}</h1>
-          @if (subtitle()) {
-            <p class="section-subtitle">{{ subtitle() }}</p>
-          }
-        </div>
-        @if (image()) {
-          <div class="section-image-container">
-            <img [src]="image()" [alt]="title()" class="section-image">
-          </div>
+    <div class="section-content" [class.full-width]="fullWidth()" [class.has-image]="image()" [class.align-start]="!image()">
+      <div class="text-container">
+        <h1 class="section-title">{{ title() }}</h1>
+        @if (subtitle()) {
+          <p class="section-subtitle">{{ subtitle() }}</p>
         }
-      } @else {
-        <h3 class="section-mini-title">{{ title() }}</h3>
+        @if (modalContent()) {
+          <button class="see-more-btn" (click)="openModal($event)">
+            See More <span class="see-more-arrow">→</span>
+          </button>
+        }
+      </div>
+      @if (image()) {
+        <div class="section-image-container">
+          <div class="images-wrapper">
+            <img [src]="image()" [alt]="title()" class="section-image">
+            @if (secondaryImage()) {
+              <img [src]="secondaryImage()" alt="Overlay" class="section-image-secondary">
+            }
+          </div>
+        </div>
       }
       <div class="content-slot">
         <ng-content />
@@ -117,6 +124,11 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       max-width: none; /* Let image sections span full width to reach right edge */
       margin-right: 0;
       padding-right: 0;
+      /* Flex properties for image layout */
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
     }
     
     /* Removed .has-image specific rule as we want it consistent */
@@ -158,7 +170,7 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       letter-spacing: 0.05em;
       line-height: 0.9;
       text-transform: uppercase;
-      color: #ffffff;
+      color: inherit;
       margin: 0;
     }
 
@@ -168,24 +180,62 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       font-weight: 300;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: #ffffff;
+      color: inherit;
       margin-top: 1.5rem;
       opacity: 0.9;
     }
 
     .section-image-container {
-      flex: 1.5; /* Give more space to image relative to text */
+      flex: 1.5;
       display: flex;
       justify-content: flex-end; 
-      min-width: 50%; /* Ensure it takes space */
-      margin-right: -20%; /* Pull strongly to the right */
+      min-width: 50%;
+      margin-right: -20%;
+      position: relative;
+    }
+
+    .images-wrapper {
+      position: relative; /* Context for absolute positioning */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: fit-content;
     }
 
     .section-image {
       max-width: 100%;
-      max-height: 60vh; 
+      max-height: 60vh;
       height: auto;
       object-fit: contain;
+      display: block; /* Remove inline-block spacing */
+    }
+
+    .section-image-secondary {
+      position: absolute;
+      bottom: -4%; /* Lower slightly as requested */
+      left: 50%; 
+      transform: translateX(-50%) scale(0.85); /* Center and scale down slightly */
+      max-height: 50vh; 
+      width: auto;
+      z-index: 2;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    }
+
+    /* Specific for Section 2 (Bubbles) */
+    :host(#section-2) .section-image {
+      max-height: 50vh;
+    }
+
+    :host(#section-2) .section-image-secondary {
+      bottom: -35%;
+      transform: translateX(-50%) scale(0.65);
+    }
+
+    /* Specific for Section 3 (Scaffold Tree) */
+    :host(#section-3) .section-image-secondary {
+      bottom: -15%;
+      transform: translateX(-50%) scale(0.85);
     }
 
     .section-mini-title {
@@ -206,16 +256,22 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       
       .text-container {
         max-width: 100%;
+        position: static; /* Reset sticky on mobile */
       }
       
       .section-image-container {
         max-width: 100%;
         justify-content: center;
         width: 100%;
+        margin-right: 0; /* Reset margin on mobile */
       }
       
       .section-image {
         max-height: 40vh;
+      }
+
+      .section-image-secondary {
+        max-height: 30vh;
       }
 
       .content-slot {
@@ -225,11 +281,57 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute }
       :host {
         padding-right: 10%; /* Reset padding on mobile */
       }
+      
+      .section-content.has-image {
+        margin-right: auto;
+        padding-right: 0;
+      }
     }
     
     .content-slot {
       flex: 1;
       min-width: 300px;
+    }
+
+    /* ─── See More Button ─── */
+    .see-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 2rem;
+      padding: 10px 24px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid currentColor;
+      border-radius: 100px;
+      color: inherit;
+      font-family: 'PP Supply Mono Regular', 'Courier New', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: fit-content;
+    }
+
+    .see-more-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateX(4px);
+    }
+
+    .see-more-btn:active {
+      transform: translateX(2px);
+    }
+
+    .see-more-arrow {
+      transition: transform 0.3s ease;
+      font-size: 1rem;
+    }
+
+    .see-more-btn:hover .see-more-arrow {
+      transform: translateX(4px);
     }
   `],
 })
@@ -239,8 +341,32 @@ export class SectionComponent {
   subtitle = input('');
   image = input<string | undefined>();
   backgroundColor = input('var(--color-1)');
+  textColor = input('#ffffff');
   isAccordionSection = input(false, { transform: booleanAttribute });
   fullWidth = input(false, { transform: booleanAttribute });
   isVisible = input(false);
   isFolded = input(false);
+
+  // Modal logic
+  modalContent = input<string | undefined>();
+  prompt = input<string | undefined>();
+  llmLinks = input<{ label: string, url: string }[] | undefined>();
+  requestModal = output<{ title: string, content: string, color: string, prompt?: string, llmLinks?: { label: string, url: string }[] }>();
+
+  // New Image inputs
+  secondaryImage = input<string | undefined>();
+
+  openModal(event: Event) {
+    event.stopPropagation();
+    const content = this.modalContent();
+    if (content) {
+      this.requestModal.emit({
+        title: this.title(),
+        content: content,
+        color: this.backgroundColor(),
+        prompt: this.prompt(),
+        llmLinks: this.llmLinks()
+      });
+    }
+  }
 }

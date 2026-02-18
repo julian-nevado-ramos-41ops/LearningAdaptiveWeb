@@ -49,8 +49,8 @@
 }
 
 html {
-    scroll-behavior: auto;
-    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+    /* scroll-snap-type: y mandatory; REMOVED to prevent forced scrolling */
 }
 
 body {

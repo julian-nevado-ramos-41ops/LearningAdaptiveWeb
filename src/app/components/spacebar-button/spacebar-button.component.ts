@@ -5,6 +5,7 @@ import {
   signal,
   afterNextRender,
   OnDestroy,
+  ElementRef,
 } from '@angular/core';
 
 @Component({
@@ -31,7 +32,9 @@ export class SpacebarButtonComponent implements OnDestroy {
 
   private keydownHandler = (event: KeyboardEvent) => {
     if (event.code === 'Space') {
-      event.preventDefault(); // Always prevent scrolling
+      // Only respond if this button's parent container is in view
+      if (!this.isInView()) return;
+      event.preventDefault();
       if (!event.repeat) {
         this.startPress(event);
       }
@@ -44,7 +47,7 @@ export class SpacebarButtonComponent implements OnDestroy {
     }
   };
 
-  constructor() {
+  constructor(private elementRef: ElementRef<HTMLElement>) {
     afterNextRender(() => {
       document.addEventListener('keydown', this.keydownHandler);
       document.addEventListener('keyup', this.keyupHandler);
@@ -57,6 +60,18 @@ export class SpacebarButtonComponent implements OnDestroy {
     if (this.pressTimer) {
       clearTimeout(this.pressTimer);
     }
+  }
+
+  /** Check if the parent sections-container is visible in the viewport center */
+  private isInView(): boolean {
+    // Walk up to find the parent app-sections-container
+    let el: HTMLElement | null = this.elementRef.nativeElement;
+    while (el && el.tagName !== 'APP-SECTIONS-CONTAINER') {
+      el = el.parentElement;
+    }
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.5;
   }
 
   gradientTransform() {

@@ -34,7 +34,7 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
                 <ng-content />
             </div>
 
-            <div class="container-ui">
+            <div class="container-ui" [class.hidden]="!isContainerInView()">
                 <app-side-nav
                     [totalSections]="totalSections()"
                     [currentSection]="currentIndex()"
@@ -73,6 +73,13 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
       margin-top: -100vh;
       pointer-events: none;
       z-index: 100;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .container-ui.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .container-ui app-side-nav,
@@ -165,6 +172,7 @@ export class SectionsContainerComponent implements OnDestroy {
     protected currentIndex = signal(0);
     private sections: Element[] = [];
     protected totalSections = signal(0);
+    protected isContainerInView = signal(false);
     private observer: IntersectionObserver | null = null;
 
     /* Horizontal helpers */
@@ -242,6 +250,9 @@ export class SectionsContainerComponent implements OnDestroy {
         if (this.sections[0]) {
             this.sections[0].classList.add('visible');
         }
+
+        // Register keyboard handler for vertical layout too
+        document.addEventListener('keydown', this.keyHandler);
     }
 
     /* ───────── Horizontal ───────── */
@@ -292,10 +303,15 @@ export class SectionsContainerComponent implements OnDestroy {
 
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
             e.preventDefault();
-            this.navigateHorizontal(this.currentIndex() + 1);
+            this.navigateNext();
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
             e.preventDefault();
-            this.navigateHorizontal(this.currentIndex() - 1);
+            if (this.isHorizontal()) {
+                this.navigateHorizontal(this.currentIndex() - 1);
+            } else {
+                const prevIndex = Math.max(0, this.currentIndex() - 1);
+                this.navigateToSection(prevIndex);
+            }
         }
     }
 
@@ -359,6 +375,7 @@ export class SectionsContainerComponent implements OnDestroy {
         const visibilityObserver = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
+                    this.isContainerInView.set(entry.isIntersecting);
                     this.containerVisible.emit(entry.isIntersecting);
                 });
             },

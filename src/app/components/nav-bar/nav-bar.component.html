@@ -23,10 +23,29 @@
         @if (!hasMenuSlot && menuItems().length > 0) {
         <ul class="menu-list">
             @for (item of menuItems(); track item.label) {
-            <li class="menu-item">
+            <li class="menu-item" [class.has-dropdown]="item.children?.length">
+                @if (item.children?.length) {
+                <div class="menu-link dropdown-trigger">
+                    {{ item.label }}
+                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"
+                        stroke-linecap="round" stroke-linejoin="round" class="dropdown-arrow">
+                        <path d="M1 1L5 5L9 1" />
+                    </svg>
+                </div>
+                <ul class="dropdown-menu">
+                    @for (child of item.children; track child.label) {
+                    <li class="dropdown-item">
+                        <a [href]="child.link" class="dropdown-link" target="_blank" rel="noopener noreferrer">
+                            {{ child.label }}
+                        </a>
+                    </li>
+                    }
+                </ul>
+                } @else {
                 <a [href]="item.link" class="menu-link">
                     {{ item.label }}
                 </a>
+                }
             </li>
             }
         </ul>

@@ -55,6 +55,12 @@ import {
       top: 40%;
       writing-mode: vertical-rl;
     }
+
+    @media (max-width: 768px) {
+      :host {
+        display: none;
+      }
+    }
   `],
 })
 export class HudOverlayComponent implements AfterViewInit {

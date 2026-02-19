@@ -6,7 +6,7 @@
 }
 
 .stw-container {
-    padding: 80px 5% 120px 5%;
+    padding: 40px 5% 120px 5%;
     display: flex;
     justify-content: center;
     background-color: var(--stw-bg-color, #F3F1E7);
@@ -58,7 +58,22 @@
     margin: 0;
     opacity: 0.95;
     letter-spacing: -0.01em;
-    white-space: pre-wrap;
+}
+
+::ng-deep .stw-description p {
+    margin: 0 0 1rem 0;
+}
+
+::ng-deep .stw-description ol {
+    text-align: left;
+    padding-left: 1.5rem;
+    margin: 1rem 0 0 0;
+    list-style-position: outside;
+}
+
+::ng-deep .stw-description ol li {
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
 }
 
 @media (max-width: 900px) {

@@ -280,6 +280,10 @@ import { Component, ChangeDetectionStrategy, input, computed, booleanAttribute, 
 
       :host {
         padding-right: 10%; /* Reset padding on mobile */
+        overflow-y: auto; /* Allow scrolling on mobile */
+        height: auto;
+        min-height: 100vh;
+        display: block; /* Switch to block to allow natural flow */
       }
       
       .section-content.has-image {

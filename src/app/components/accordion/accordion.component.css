@@ -47,12 +47,12 @@
     color: var(--sa-text-color, #ffffff);
     height: 70vh;
     margin-top: 2vh;
-    /* Adjusted from -10vh to simulate "just above" but allowing header space */
 }
 
 /* ============================================
    SCROLL MODE — Header (Title & Subtitle)
    ============================================ */
+
 .section-header {
     width: 100%;
     padding-left: 5%;
@@ -64,7 +64,7 @@
     box-sizing: border-box;
 }
 
-/* Match Logo Carousel positioning exactly */
+/* Ajuste para pantallas grandes (para alinear con otros contenedores) */
 @media (min-width: 769px) {
     .section-header {
         padding-left: 6rem;
@@ -75,6 +75,14 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.bracket {
+    font-family: "PP Supply Mono Regular", "PP Supply Mono Regular Placeholder", monospace;
+    font-size: 1.1rem;
+    font-weight: 800;
+    /* Usa un color fallback si la variable no está definida */
+    color: var(--color-1, #E85D04);
 }
 
 .section-title {
@@ -88,20 +96,12 @@
     line-height: 1;
 }
 
-.bracket {
-    font-family: "PP Supply Mono Regular", "PP Supply Mono Regular Placeholder", monospace;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: rgba(0, 0, 0, 0.4);
-}
-
 .section-subtitle {
     font-family: "PP Supply Mono Regular", "PP Supply Mono Regular Placeholder", monospace;
     font-size: 1.1rem;
-    /* Sligthly larger */
     color: rgba(0, 0, 0, 0.4);
     margin: 0.5rem 0 0 1.2rem;
-    /* Indentation to match bracket width */
+    /* Indentación para alinear debajo del texto del título, saltando el bracket */
     font-weight: 400;
     text-transform: none;
     opacity: 0.8;
@@ -203,14 +203,10 @@
     opacity: 0.7;
     margin: 0;
     white-space: pre-wrap;
-    /* Para respetar los saltos de línea \n */
 }
 
 /* ============================================
    SCROLL MODE — Two-column layout (with map)
-   ============================================ */
-/* ============================================
-   SCROLL MODE — Two-column layout (with map or images)
    ============================================ */
 .card-content-with-map {
     flex-direction: row !important;
@@ -220,7 +216,6 @@
 
 .scroll-card.collapsed .card-content-with-map {
     flex-direction: column !important;
-    /* Reset to column/center when collapsed */
 }
 
 .card-text-col {
@@ -267,7 +262,17 @@
     z-index: 2;
 }
 
-/*PARA AJUSTAR EL TAMAÑO DE LA IMAGEN DE LA CIUDAD(1º CARTA DEL 1º ACORDEÓN)*/
+/* Grayscale by default, color on hover */
+.images-stack img.grayscale-hover {
+    filter: grayscale(100%);
+    transition: filter 0.4s ease, all 0.5s ease;
+}
+
+.images-stack img.grayscale-hover:hover {
+    filter: grayscale(0%);
+}
+
+/* Adjust size for city image in first accordion card */
 .images-stack img.city-img-small {
     max-width: 65%;
     max-height: 65%;
@@ -275,12 +280,11 @@
 }
 
 .scroll-card.collapsed .images-stack img {
-    /* Adjust size in collapsed state if needed */
     max-width: 80%;
     max-height: 80%;
 }
 
-/* HIDE MAP WHEN COLLAPSED to restore original behavior for map cards */
+/* HIDE MAP WHEN COLLAPSED */
 .scroll-card.collapsed app-interactive-map {
     display: none;
 }
@@ -290,10 +294,7 @@
 }
 
 .scroll-card.collapsed .images-stack img.city-img-small {
-    max-width: 50%;
-    /* Even smaller when collapsed if needed, or keep 65% relative to the 80% container? Let's just use the class override */
     max-width: 52%;
-    /* 0.65 * 0.8 ≈ 0.52 */
     max-height: 52%;
     transform: translate(-50%, -70%);
 }
@@ -301,7 +302,6 @@
 /* ============================================
    SCROLL MODE — Prompt Copy Button
    ============================================ */
-/* Wrapper for prompt & LLM to be side-by-side */
 .actions-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -414,14 +414,12 @@
 
 .testimonial-item {
     padding: 8px 0;
-    /* Removed background and border */
     background: transparent;
     border: none;
 }
 
 .testimonial-author {
     font-size: 1.25rem;
-    /* Increased size */
     font-weight: 700;
     color: rgba(255, 255, 255, 0.95);
     margin-bottom: 4px;
@@ -431,12 +429,10 @@
     font-weight: 400;
     color: rgba(255, 255, 255, 0.6);
     font-size: 1.05rem;
-    /* Increased size */
 }
 
 .testimonial-quote {
     font-size: 1.2rem;
-    /* Increased size */
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
@@ -495,10 +491,31 @@
         height: auto;
     }
 
+    /* Force auto height */
+    .sticky-wrapper {
+        position: relative;
+        height: auto;
+        top: 0;
+        display: block;
+    }
+
+    .scroll-section {
+        height: auto !important;
+    }
+
     .scroll-cards-container {
         flex-direction: column;
-        width: 90% !important;
+        width: 100% !important;
         height: auto;
+        margin-top: 2rem;
+        gap: 1rem !important;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+
+    .section-header {
+        padding-left: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .scroll-card,
@@ -506,20 +523,64 @@
     .scroll-card.expanded {
         flex: none;
         height: auto;
-        min-height: 150px;
         width: 100%;
     }
 
-    .scroll-card.expanded {
-        min-height: 350px;
+    .scroll-card.collapsed {
+        min-height: 250px;
     }
 
-    .vertical-title {
+    .scroll-card.expanded {
+        min-height: 450px;
+    }
+
+    /* Show images in collapsed state like desktop */
+    .scroll-card.collapsed .card-visual-col {
+        display: flex !important;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+
+    /* Title styles for mobile — only show on COLLAPSED cards */
+    .scroll-card.collapsed .vertical-title {
+        display: block;
+        position: absolute;
+        transform: none;
+        writing-mode: horizontal-tb;
+        white-space: normal;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 1.5rem;
+        font-size: 1.8rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: #fff;
+        z-index: 3;
+        opacity: 1 !important;
+        pointer-events: none;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+        box-sizing: border-box;
+    }
+
+    /* HIDE vertical-title when EXPANDED — the h2 inside card-content already shows it */
+    .scroll-card.expanded .vertical-title {
         display: none;
     }
 
     .scroll-card.collapsed .card-content {
+        display: none;
+    }
+
+    .scroll-card.collapsed {
+        background: #111;
         display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
     }
 
     .card-content {
@@ -536,5 +597,84 @@
 
     .llm-buttons {
         flex-direction: column;
+    }
+}
+
+/* Default hidden on desktop for close btn (removed logic kept just in case) */
+.mobile-close-btn {
+    display: none;
+}
+
+/* ============================================
+   MOBILE — Close button & expanded layout with image on top
+   ============================================ */
+@media (max-width: 768px) {
+
+    /* Show close button only on mobile when card is expanded */
+    .scroll-card.expanded .mobile-close-btn {
+        display: flex;
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        color: #fff;
+        cursor: pointer;
+        pointer-events: all;
+    }
+
+    /* Expanded card: column layout — image first, then text */
+    .scroll-card.expanded .card-content {
+        flex-direction: column !important;
+        max-width: 100% !important;
+        padding: 1rem 1.2rem 1.5rem;
+        /* Reduced top padding heavily to lift content */
+        height: auto;
+        overflow-y: auto;
+    }
+
+    /* Image block HIDDEN on expanded per user request to bring text up */
+    .scroll-card.expanded .card-visual-col {
+        display: none !important;
+    }
+
+    /* Text block below image */
+    .scroll-card.expanded .card-text-col {
+        order: 1;
+        width: 100%;
+        flex: 1;
+    }
+
+    /* Images in expanded card occupy full width */
+    .scroll-card.expanded .images-stack {
+        width: 100%;
+        height: 100%;
+    }
+
+    .scroll-card.expanded .images-stack img {
+        width: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    /* Reduce spacing between elements on mobile */
+    .scroll-card.expanded .scroll-card-icon {
+        margin-bottom: 0.75rem;
+        font-size: 2rem;
+        /* Slightly smaller icon */
+    }
+
+    .scroll-card.expanded h2 {
+        font-size: 2rem;
+        /* Slightly smaller title */
+        margin-bottom: 0.75rem;
     }
 }

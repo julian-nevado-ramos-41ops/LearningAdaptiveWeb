@@ -475,7 +475,7 @@ export class AppComponent {
     {
       label: 'THE GROUP', children: [
         { label: 'SciTheWorld', link: 'https://scitheworld.com' },
-        { label: 'Algorithmization', link: 'https://scitheworld.com/algorithmization' },
+        { label: 'Algorithmization', link: 'https://algorithmization' },
         { label: 'SystematicMe', link: 'https://systematicme.com' },
         { label: '41OPS', link: 'https://41ops.com' }
       ]

@@ -521,14 +521,14 @@ export class AppComponent {
   /* ── Accordion Data (2 blocks) ── */
   accordionItems = signal<any[]>([
     {
-      title: 'THE ORIGIN OF THE NAME',
+      title: 'AN EARLY CAREER',
       description: `It refers to Sergio Álvarez-Teleña's pioneering work on algorithmic trading, first formalized in 2012 as a book "Trading 2.0: Learning~Adaptive Machines" —a body of work that later became the foundation of his PhD thesis at University College London (Computer Science).\nThe thesis was supervised within an environment closely connected to the most demanding standards of quantitative finance, including leadership linked to Renaissance Technologies—a firm long admired for its rigor and results.`,
       images: [
         { src: 'img/book2.jpg', alt: 'Book', class: 'grayscale-hover first-card-small' }
       ]
     },
     {
-      title: 'A COMMITMENT SINCE 2012',
+      title: 'A PRIVILEGED TECH',
       description: `The name reflects continuity of thought and a cold, disciplined commitment to reaching the highest standards—pursued relentlessly since 2012 and achieving all sorts of recognitions and awards ever since.`,
       images: [
         { src: 'img/sergio_receiving_prize.jpg', alt: 'Sergio receiving prize', class: 'grayscale-hover' }

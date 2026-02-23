@@ -1,29 +1,10 @@
 <div class="collapsible-container">
     @for (item of items(); track $index) {
-    <div class="collapsible-row" [class.active]="expandedIndex() === $index">
-        <div class="row-header" (click)="toggleItem($index)">
-            <span class="plus-icon">{{ expandedIndex() === $index ? '−' : '+' }}</span>
+    <div class="collapsible-row">
+        <div class="row-header" (click)="openModal(item)">
+            <span class="plus-icon">+</span>
             <h3 class="item-title">{{ item.title }}</h3>
         </div>
-        @if (expandedIndex() === $index) {
-        <div class="row-content">
-            <div class="detail-layout">
-                <div class="text-content">
-                    @if (item.subtitle) {
-                    <h4 class="item-subtitle">
-                        <span class="bracket">[</span>{{ item.subtitle }}<span class="bracket">]</span>
-                    </h4>
-                    }
-                    <div class="item-paragraph">{{ item.content }}</div>
-                </div>
-                @if (item.image) {
-                <div class="image-content">
-                    <img [src]="item.image" [alt]="item.title" class="item-image" loading="lazy">
-                </div>
-                }
-            </div>
-        </div>
-        }
     </div>
     }
 </div>

@@ -1,3 +1,5 @@
+
+
 import {
     Component,
     ChangeDetectionStrategy,
@@ -9,15 +11,13 @@ import {
     computed,
     OnDestroy,
     numberAttribute,
+    Renderer2,
+    Inject
 } from '@angular/core';
-import { SectionIndicatorComponent } from '../section-indicator/section-indicator.component';
-import { SpacebarButtonComponent } from '../spacebar-button/spacebar-button.component';
-import { SideNavComponent } from '../side-nav/side-nav.component';
-
+import { DOCUMENT } from '@angular/common';
 @Component({
     selector: 'app-sections-container',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [SectionIndicatorComponent, SpacebarButtonComponent, SideNavComponent],
     host: {
         'class': 'scroll-container',
         '[class.horizontal]': 'isHorizontal()',
@@ -29,23 +29,18 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
         <div class="viewport-wrapper">
             <div
                 class="sections-track"
+                [class.blurred]="showScrollIndicator()"
                 [style.transform]="isHorizontal() ? trackTransform() : null"
             >
                 <ng-content />
             </div>
 
-            <div class="container-ui" [class.hidden]="!isContainerInView()">
-                <app-side-nav
-                    [totalSections]="totalSections()"
-                    [currentSection]="currentIndex()"
-                    (sectionClicked)="onSideNavClick($event)"
-                />
-                <app-section-indicator
-                    [current]="currentIndex()"
-                    [total]="totalSections()"
-                />
-                <app-spacebar-button (pressed)="navigateNext()" />
-            </div>
+            @if (showScrollIndicator()) {
+              <div class="mobile-scroll-indicator">
+                <img src="img/logo-nav-bar.gif" alt="Robot Indicator" class="indicator-bot">
+                <span class="indicator-text" [innerHTML]="indicatorText()"></span>
+              </div>
+            }
         </div>
     `,
     styles: [`
@@ -65,53 +60,77 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
       display: contents;
     }
 
-    /* ─── Container UI (vertical) ─── */
-    .container-ui {
-      position: sticky;
-      bottom: 0;
-      height: 100vh;
-      margin-top: -100vh;
-      pointer-events: none;
-      z-index: 100;
-      opacity: 1;
-      transition: opacity 0.3s ease;
-    }
-
-    .container-ui.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .container-ui app-side-nav,
-    .container-ui app-section-indicator,
-    .container-ui app-spacebar-button {
-      pointer-events: auto;
-    }
-
-    app-side-nav {
-      position: absolute;
-      right: 2rem;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    app-section-indicator {
-      position: absolute;
-      bottom: 2rem;
-      left: 2rem;
-    }
-
-    app-spacebar-button {
-      position: absolute;
-      bottom: 2rem;
-      right: 2rem;
-    }
-
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       :host {
         margin: 0 1rem;
         border-radius: 16px;
       }
+    }
+
+    /* ─── Mobile Scroll Indicator ─── */
+    .mobile-scroll-indicator {
+        display: flex;
+        position: absolute;
+        top: 50vh; /* Centered in the first section (100vh) for vertical layout */
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0.75rem 1.5rem;
+        border-radius: 100px;
+        align-items: center;
+        gap: 1rem;
+        z-index: 10000;
+        pointer-events: none; /* Let clicks pass through */
+        animation: indicatorFadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        white-space: nowrap;
+    }
+
+    :host.horizontal .mobile-scroll-indicator {
+        top: 50%; /* Centered in the middle of the host for horizontal layout */
+    }
+
+    @media (min-width: 901px) {
+        .mobile-scroll-indicator {
+            display: none !important;
+        }
+        .sections-track.blurred {
+            filter: none !important;
+            pointer-events: auto !important;
+        }
+    }
+
+    @keyframes indicatorFadeIn {
+      from { opacity: 0; transform: translate(-50%, calc(-50% + 20px)); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .sections-track.blurred {
+      filter: blur(4px);
+      transition: filter 0.8s ease;
+      pointer-events: none; /* Prevent accidental interactions while blurred */
+    }
+
+    /* ─── Indicator Innards ─── */
+    .indicator-bot {
+      width: 30px;
+      height: auto;
+    }
+
+    .indicator-text {
+      color: rgba(0, 0, 0, 0.8);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .indicator-text u {
+      text-decoration-color: var(--color-1, #E85D04);
+      text-underline-offset: 4px;
+      font-weight: 600;
     }
 
     /* ─── Horizontal-specific ─── */
@@ -139,15 +158,7 @@ import { SideNavComponent } from '../side-nav/side-nav.component';
       transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
-    :host.horizontal .container-ui {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: auto;
-      margin-top: 0;
-    }
+
 
     /* Force sections to fill the viewport */
     :host.horizontal ::ng-deep app-section {
@@ -169,11 +180,16 @@ export class SectionsContainerComponent implements OnDestroy {
     containerVisible = output<boolean>();
 
     /* State */
-    protected currentIndex = signal(0);
+    currentIndex = signal(0);
     private sections: Element[] = [];
-    protected totalSections = signal(0);
-    protected isContainerInView = signal(false);
+    totalSections = signal(0);
     private observer: IntersectionObserver | null = null;
+    private containerObserver: IntersectionObserver | null = null;
+
+    /* Mobile Indicator State */
+    showScrollIndicator = signal(false);
+    private hasInteracted = signal(false);
+    private indicatorTimeout: any;
 
     /* Horizontal helpers */
     isHorizontal = computed(() => this.layout() === 'horizontal');
@@ -181,6 +197,12 @@ export class SectionsContainerComponent implements OnDestroy {
     trackTransform = computed(
         () => `translateX(-${this.currentIndex() * 100}%)`
     );
+
+    indicatorText = computed(() => {
+        return this.isHorizontal()
+            ? 'keep track of the messages <u>to the right</u>'
+            : '<u>scrolling down</u>';
+    });
 
     /* Flat height: simply the input height (e.g. 85vh) */
     hostHeight = computed(() =>
@@ -209,7 +231,11 @@ export class SectionsContainerComponent implements OnDestroy {
     private touchStartHandler = (e: TouchEvent) => this.onTouchStart(e);
     private touchEndHandler = (e: TouchEvent) => this.onTouchEnd(e);
 
-    constructor(private elementRef: ElementRef<HTMLElement>) {
+    constructor(
+        private elementRef: ElementRef<HTMLElement>,
+        private renderer: Renderer2,
+        @Inject(DOCUMENT) private document: Document
+    ) {
         afterNextRender(() => {
             if (this.isHorizontal()) {
                 this.setupHorizontal();
@@ -237,6 +263,13 @@ export class SectionsContainerComponent implements OnDestroy {
                             this.sectionChanged.emit(index);
                             entry.target.classList.add('visible');
                         }
+
+                        // Handle indicator exclusively in the first section for vertical layout
+                        if (index === 0 && !this.hasInteracted()) {
+                            this.triggerMobileIndicator();
+                        } else if (index !== 0) {
+                            this.hideMobileIndicator();
+                        }
                     } else {
                         entry.target.classList.remove('visible');
                     }
@@ -250,9 +283,6 @@ export class SectionsContainerComponent implements OnDestroy {
         if (this.sections[0]) {
             this.sections[0].classList.add('visible');
         }
-
-        // Register keyboard handler for vertical layout too
-        document.addEventListener('keydown', this.keyHandler);
     }
 
     /* ───────── Horizontal ───────── */
@@ -273,6 +303,7 @@ export class SectionsContainerComponent implements OnDestroy {
     }
 
     private onWheel(e: WheelEvent) {
+        this.hideMobileIndicator();
         if (this.isTransitioning) {
             e.preventDefault();
             return;
@@ -297,25 +328,22 @@ export class SectionsContainerComponent implements OnDestroy {
     }
 
     private onKey(e: KeyboardEvent) {
+        this.hideMobileIndicator();
         const rect = this.elementRef.nativeElement.getBoundingClientRect();
         const inView = rect.top < window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.5;
         if (!inView || this.isTransitioning) return;
 
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
             e.preventDefault();
-            this.navigateNext();
+            this.navigateHorizontal(this.currentIndex() + 1);
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
             e.preventDefault();
-            if (this.isHorizontal()) {
-                this.navigateHorizontal(this.currentIndex() - 1);
-            } else {
-                const prevIndex = Math.max(0, this.currentIndex() - 1);
-                this.navigateToSection(prevIndex);
-            }
+            this.navigateHorizontal(this.currentIndex() - 1);
         }
     }
 
     private onTouchStart(e: TouchEvent) {
+        this.hideMobileIndicator();
         this.touchStartX = e.changedTouches[0].clientX;
         this.touchStartY = e.changedTouches[0].clientY;
     }
@@ -353,7 +381,7 @@ export class SectionsContainerComponent implements OnDestroy {
 
     /* ───────── Shared ───────── */
 
-    protected navigateNext() {
+    navigateNext() {
         if (this.isHorizontal()) {
             this.navigateHorizontal(this.currentIndex() + 1);
         } else {
@@ -362,7 +390,7 @@ export class SectionsContainerComponent implements OnDestroy {
         }
     }
 
-    protected onSideNavClick(index: number) {
+    onSideNavClick(index: number) {
         if (this.isHorizontal()) {
             this.navigateHorizontal(index);
         } else {
@@ -375,13 +403,52 @@ export class SectionsContainerComponent implements OnDestroy {
         const visibilityObserver = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
-                    this.isContainerInView.set(entry.isIntersecting);
                     this.containerVisible.emit(entry.isIntersecting);
+
+                    // Toggle snapping only for vertical containers
+                    if (!this.isHorizontal()) {
+                        if (entry.isIntersecting) {
+                            this.renderer.addClass(this.document.documentElement, 'snapping-enabled');
+                        } else {
+                            this.renderer.removeClass(this.document.documentElement, 'snapping-enabled');
+                        }
+                    }
+
+                    // Trigger mobile indicator on first appearance if horizontal and index is 0
+                    if (entry.isIntersecting && this.isHorizontal() && this.currentIndex() === 0 && !this.hasInteracted()) {
+                        this.triggerMobileIndicator();
+                    }
                 });
             },
             { root: null, threshold: 0.1 }
         );
         visibilityObserver.observe(container);
+    }
+
+    private triggerMobileIndicator() {
+        if (this.hasInteracted()) return;
+
+        this.showScrollIndicator.set(true);
+
+        if (this.indicatorTimeout) {
+            clearTimeout(this.indicatorTimeout);
+        }
+
+        this.indicatorTimeout = setTimeout(() => {
+            if (this.showScrollIndicator()) {
+                this.showScrollIndicator.set(false);
+            }
+        }, 5000); /* 5 seconds of animation */
+    }
+
+    private hideMobileIndicator() {
+        if (!this.hasInteracted()) {
+            this.hasInteracted.set(true);
+            this.showScrollIndicator.set(false);
+            if (this.indicatorTimeout) {
+                clearTimeout(this.indicatorTimeout);
+            }
+        }
     }
 
     scrollToSection(index: number) {
@@ -404,6 +471,7 @@ export class SectionsContainerComponent implements OnDestroy {
 
     ngOnDestroy() {
         if (this.observer) this.observer.disconnect();
+        this.renderer.removeClass(this.document.documentElement, 'snapping-enabled');
         const container = this.elementRef.nativeElement;
         container.removeEventListener('wheel', this.wheelHandler);
         container.removeEventListener('touchstart', this.touchStartHandler);

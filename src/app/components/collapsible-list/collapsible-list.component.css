@@ -6,9 +6,10 @@
    ======================================== */
 
 .collapsible-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     width: 100%;
+    gap: 1.5rem;
 }
 
 /* --- Each Row --- */
@@ -122,8 +123,6 @@
     font-weight: 500;
     color: #ffffff;
     line-height: 1.7;
-    white-space: pre-wrap;
-    /* Preserve line breaks */
 }
 
 /* --- Image Content --- */
@@ -171,5 +170,42 @@
 
     .item-paragraph {
         font-size: 1rem;
+    }
+
+    .item-paragraph {
+        font-size: 1rem;
+    }
+
+    /* Adjust grid gap for mobile */
+    .collapsible-container {
+        gap: 10px;
+    }
+
+    .collapsible-row {
+        border-bottom: none;
+        /* remove standard border */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        /* box style */
+        border-radius: 8px;
+        padding: 0.5rem;
+    }
+
+    /* Active row styling */
+    .collapsible-row.active {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .row-header {
+        padding: 0.5rem 0;
+        gap: 0.5rem;
+    }
+
+    .item-title {
+        font-size: 1.2rem;
+    }
+
+    .plus-icon {
+        font-size: 1.2rem;
+        min-width: 1.2rem;
     }
 }

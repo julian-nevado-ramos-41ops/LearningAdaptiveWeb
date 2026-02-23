@@ -12,9 +12,18 @@ import { Component, ChangeDetectionStrategy, input, output, booleanAttribute, si
   },
   template: `
     <div class="vertical-title">{{ title() }}</div>
+    @if (image()) {
+      <div class="card-bg-image">
+        <img [src]="image()" [alt]="title()" />
+      </div>
+    }
     <div class="card-content">
-      <h2>{{ title() }}</h2>
-      <ng-content />
+      <div class="card-text">
+        <h2>{{ title() }}</h2>
+        <div class="card-body">
+          <ng-content />
+        </div>
+      </div>
     </div>
   `,
   styles: `
@@ -29,6 +38,7 @@ import { Component, ChangeDetectionStrategy, input, output, booleanAttribute, si
       display: flex;
       flex-direction: column;
       min-width: 0;
+      container-type: inline-size;
     }
 
     :host.expanded {
@@ -38,32 +48,84 @@ import { Component, ChangeDetectionStrategy, input, output, booleanAttribute, si
     :host.collapsed {
       flex: 1;
       background: #111;
-      align-items: center;
-      justify-content: center;
     }
 
     :host.collapsed:hover {
       background: #1a1a1a;
     }
 
+    /* ─── Background Image (always visible) ─── */
+    .card-bg-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70%;
+      height: 70%;
+      z-index: 0;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .card-bg-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+      transition: filter 0.5s ease;
+      opacity: 0.4;
+    }
+
+    :host:hover .card-bg-image img {
+      filter: grayscale(0%);
+      opacity: 0.6;
+    }
+
+    :host.expanded .card-bg-image img {
+      opacity: 0.25;
+    }
+
+    :host.expanded:hover .card-bg-image img {
+      filter: grayscale(0%);
+      opacity: 0.35;
+    }
+
+    /* ─── Content ─── */
     .card-content {
-      padding: 40px 60px;
+      position: relative;
+      z-index: 1;
+      padding: 40px clamp(20px, 8%, 60px);
       height: 100%;
       display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 2rem;
       padding-top: 5%;
       opacity: 1;
       transition: opacity 0.3s ease;
-      max-width: 600px;
+      max-width: 100%;
       box-sizing: border-box;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .card-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      min-width: 0;
+    }
+
+    .card-body {
+      display: block;
     }
 
     :host.collapsed .card-content {
       display: none;
     }
 
+    /* ─── Vertical Title (collapsed state) ─── */
     .vertical-title {
       position: absolute;
       bottom: 60px;
@@ -77,6 +139,12 @@ import { Component, ChangeDetectionStrategy, input, output, booleanAttribute, si
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
+      text-transform: uppercase;
+      max-width: 80dvh;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 2;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
     }
 
     :host.collapsed.no-expanded .vertical-title {
@@ -84,28 +152,41 @@ import { Component, ChangeDetectionStrategy, input, output, booleanAttribute, si
       transform: none;
       left: 40px;
       bottom: 40px;
+      max-width: calc(100% - 80px);
+      white-space: normal;
     }
 
-    /* When expanded, collapsed cards should just show vertical title (default opacity 0 in base style, need to override here) */
     :host.collapsed:not(.no-expanded) .vertical-title {
       opacity: 1;
     }
 
+    /* ─── Heading ─── */
     h2 {
-      font-size: 2.5rem;
+      font-size: clamp(1.2rem, 10cqi, 2.5rem);
       font-weight: 400;
       margin: 0 0 1.5rem 0;
       font-family: 'Bebas Neue', 'Impact', sans-serif;
       color: #ffffff;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      max-width: 100%;
+      line-height: 1.1;
+      text-transform: uppercase;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
     }
 
+    /* ─── Mobile ─── */
     @media (max-width: 768px) {
       :host,
       :host.collapsed,
       :host.expanded {
         flex: none;
-        height: 200px;
         width: 100%;
+      }
+
+      :host.collapsed {
+        height: auto;
+        min-height: 60px;
       }
 
       :host.expanded {
@@ -116,25 +197,40 @@ import { Component, ChangeDetectionStrategy, input, output, booleanAttribute, si
         display: none;
       }
 
+      /* Hide image on all mobile states */
+      .card-bg-image {
+        display: none;
+      }
+
+      /* On mobile collapsed: show only title */
       :host.collapsed .card-content {
         display: flex;
       }
 
+      :host.collapsed .card-body {
+        display: none;
+      }
+
       .card-content {
         padding: 30px;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      h2 {
+        text-align: left;
       }
     }
   `,
 })
 export class AccordionCardComponent {
   title = input.required<string>();
+  image = input<string>();
   expanded = input(false, { transform: booleanAttribute });
   clicked = output<void>();
   anyExpanded = signal(false);
 
   onClick() {
-    if (!this.expanded()) {
-      this.clicked.emit();
-    }
+    this.clicked.emit();
   }
 }

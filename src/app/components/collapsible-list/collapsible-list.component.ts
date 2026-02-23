@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface CollapsibleItem {
@@ -18,13 +18,14 @@ export interface CollapsibleItem {
 })
 export class CollapsibleListComponent {
     items = input.required<CollapsibleItem[]>();
-    expandedIndex = signal<number | null>(null);
+    requestModal = output<{ title: string, content: string }>();
 
-    toggleItem(index: number) {
-        if (this.expandedIndex() === index) {
-            this.expandedIndex.set(null);
-        } else {
-            this.expandedIndex.set(index);
-        }
+    openModal(item: CollapsibleItem) {
+        const contentStr = `
+            ${item.subtitle ? `<h4 style="color: var(--color-1); font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; margin-bottom: 1rem;"><span style="font-weight: 800;">[</span>${item.subtitle}<span style="font-weight: 800;">]</span></h4>` : ''}
+            <div style="font-family: 'Inter', sans-serif; font-size: 1.125rem; line-height: 1.7; color: rgba(255, 255, 255, 0.9); white-space: pre-wrap;">${item.content}</div>
+            ${item.image ? `<img src="${item.image}" style="max-width: 100%; border-radius: 8px; margin-top: 1rem;">` : ''}
+        `;
+        this.requestModal.emit({ title: item.title, content: contentStr });
     }
 }

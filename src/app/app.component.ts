@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, viewChild, computed } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
-import { SectionsContainerComponent } from './components/sections-container/sections-container.component';
-import { SectionComponent } from './components/section/section.component';
+import { SectionsContainerComponent } from './components/sections-container copy/sections-container.component';
+import { SectionComponent } from './components/section copy/section.component';
 import { AwardsListComponent } from './components/awards-list/awards-list.component';
 import { LogoCarouselComponent } from './components/logo-carousel/logo-carousel.component';
 import { NavBarComponent, NavCommand } from './components/nav-bar/nav-bar.component';
@@ -62,7 +62,7 @@ interface SectionData {
     <app-hud-overlay />
 
     <app-nav-bar 
-      [logo]="{ src: './img/logo_stw.png', alt: 'Algorithmization', link: '/' }"
+      [logo]="{ src: 'img/logo-nav-bar.gif', alt: 'Algorithmization', link: '/' }"
       [menuItems]="navItems()" 
       variant="glass"
       topOffset="20px"
@@ -113,26 +113,29 @@ interface SectionData {
       #horizontalContainerCollapsible
       id="horizontal-collapsible"
     >
-      @for (section of horizontalSectionsStructure(); track section.id) {
+      @for (section of horizontalSectionsStructure(); track section.id; let i = $index, count = $count) {
         <app-section
           [id]="section.id"
           [title]="section.title"
           [subtitle]="section.subtitle"
           [backgroundColor]="section.backgroundColor"
           [textColor]="section.textColor || '#ffffff'"
+          [sectionIndex]="i"
+          [totalSections]="count"
+          [globalCurrentSection]="currentSection()"
+          (navigate)="horizontalContainerCollapsible.scrollToSection($event)"
+          (nextSection)="horizontalContainerCollapsible.scrollToSection(i + 1)"
         >
             @if (section.customContent === 'collapsible-1') {
                 <div class="two-col-lists">
-                  <app-collapsible-list [items]="collapsibleList1Half1()" />
-                  <app-collapsible-list [items]="collapsibleList1Half2()" />
+                  <app-collapsible-list [items]="collapsibleList1()" (requestModal)="openModal({title: $event.title, content: $event.content, color: section.backgroundColor})" style="width: 100%;" />
                 </div>
             } @else if (section.customContent === 'collapsible-2') {
                 <div class="two-col-lists">
-                  <app-collapsible-list [items]="collapsibleList2Half1()" />
-                  <app-collapsible-list [items]="collapsibleList2Half2()" />
+                  <app-collapsible-list [items]="collapsibleList2()" (requestModal)="openModal({title: $event.title, content: $event.content, color: section.backgroundColor})" style="width: 100%;" />
                 </div>
             } @else if (section.customContent === 'collapsible-3') {
-                <p class="section-quote-paragraph">Learning~Adaptive is an investment vehicle built on applied science and AI-native infrastructure, designed to deliver long-term capital compounding through structural efficiency and a continuous creation of optionality upon SciTheWorld Group.</p>
+                <p class="section-quote-paragraph"><em>[ Learning~Adaptive is an investment vehicle built on applied science and AI-native infrastructure, designed to deliver long-term capital compounding through structural efficiency and a continuous creation of optionality upon SciTheWorld Group. ]</em></p>
             }
         </app-section>
       }
@@ -152,37 +155,39 @@ interface SectionData {
 
     @if (modalVisible()) {
       <div class="modal-overlay" (click)="closeModal()">
-        <div class="modal-container" [style.background-color]="currentModalData()?.color" (click)="$event.stopPropagation()">
+          <div class="modal-container" [style.background-color]="currentModalData()?.color" (click)="$event.stopPropagation()">
             <button class="close-btn" (click)="closeModal()">×</button>
             <h2 class="modal-title">{{ currentModalData()?.title }}</h2>
-            <div class="modal-body" [innerHTML]="currentModalData()?.content"></div>
-            @if (currentModalData()?.prompt || currentModalData()?.llmLinks?.length) {
-              <div class="modal-actions">
-                @if (currentModalData()?.prompt) {
-                  <div class="prompt-section">
-                    <span class="action-label">First, copy the prompt:</span>
-                    <button class="copy-btn" (click)="copyPrompt(currentModalData()!.prompt!)">
-                      @if (copied()) {
-                        <span class="copy-icon">✓</span> Copied!
-                      } @else {
-                        <span class="copy-icon">📋</span> Copy prompt
-                      }
-                    </button>
-                  </div>
-                }
-                @if (currentModalData()?.llmLinks?.length) {
-                  <div class="llm-section">
-                    <span class="action-label">Then, check on the different LLMs:</span>
-                    <div class="llm-buttons">
-                      @for (link of currentModalData()!.llmLinks!; track link.label) {
-                        <button class="llm-btn" (click)="openLlmLink(link.url)">{{ link.label }}</button>
-                      }
+            <div class="modal-scroll-wrapper">
+              <div class="modal-body" [innerHTML]="currentModalData()?.content"></div>
+              @if (currentModalData()?.prompt || currentModalData()?.llmLinks?.length) {
+                <div class="modal-actions">
+                  @if (currentModalData()?.prompt) {
+                    <div class="prompt-section">
+                      <span class="action-label">First, copy the prompt:</span>
+                      <button class="copy-btn" (click)="copyPrompt(currentModalData()!.prompt!)">
+                        @if (copied()) {
+                          <span class="copy-icon">✓</span> Copied!
+                        } @else {
+                          <span class="copy-icon">📋</span> Copy prompt
+                        }
+                      </button>
                     </div>
-                  </div>
-                }
-              </div>
-            }
-        </div>
+                  }
+                  @if (currentModalData()?.llmLinks?.length) {
+                    <div class="llm-section">
+                      <span class="action-label">Then, check on the different LLMs:</span>
+                      <div class="llm-buttons">
+                        @for (link of currentModalData()!.llmLinks!; track link.label) {
+                          <button class="llm-btn" (click)="openLlmLink(link.url)">{{ link.label }}</button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
       </div>
     }
   `,
@@ -288,6 +293,28 @@ interface SectionData {
         border-radius: 12px;
         color: #ffffff;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        max-height: 90vh;
+    }
+    
+    .modal-scroll-wrapper {
+        overflow-y: auto;
+        padding-right: 1rem;
+        /* Custom scrollbar for webkit */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+    
+    .modal-scroll-wrapper::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal-scroll-wrapper::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .modal-scroll-wrapper::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
     }
     
     @media (max-width: 768px) {
@@ -320,6 +347,7 @@ interface SectionData {
         text-transform: uppercase;
         letter-spacing: 1px;
         color: #ffffff;
+        flex-shrink: 0;
     }
 
     .modal-body {
@@ -496,7 +524,7 @@ export class AppComponent {
       title: 'THE ORIGIN OF THE NAME',
       description: `It refers to Sergio Álvarez-Teleña's pioneering work on algorithmic trading, first formalized in 2012 as a book "Trading 2.0: Learning~Adaptive Machines" —a body of work that later became the foundation of his PhD thesis at University College London (Computer Science).\nThe thesis was supervised within an environment closely connected to the most demanding standards of quantitative finance, including leadership linked to Renaissance Technologies—a firm long admired for its rigor and results.`,
       images: [
-        { src: 'img/book2.jpg', alt: 'Book', class: 'grayscale-hover' }
+        { src: 'img/book2.jpg', alt: 'Book', class: 'grayscale-hover first-card-small' }
       ]
     },
     {
@@ -543,7 +571,7 @@ export class AppComponent {
 
   collapsibleList1 = signal<CollapsibleItem[]>([
     {
-      title: 'Public markets — Alpha Dynamics',
+      title: '1. Public markets — Alpha Dynamics',
       subtitle: '',
       content: `For liquid markets, Learning~Adaptive leverages Alpha Dynamics, SciTheWorld's AI-native investment platform. Alpha Dynamics spans:
 • algorithmic portfolio construction,
@@ -555,7 +583,7 @@ This is not tooling layered on top of legacy processes; it is investment infrast
       image: ''
     },
     {
-      title: 'Private markets — Fractal',
+      title: '2. Private markets — Fractal',
       subtitle: '',
       content: `In private markets, Learning~Adaptive goes beyond capital allocation.
 By leveraging Fractal, SciTheWorld's End-to-End, AI-first corporate technology, it can:
@@ -566,7 +594,7 @@ Private investments are not treated as isolated positions, but as interacting co
       image: ''
     },
     {
-      title: 'Extreme-efficiency as a structural advantage',
+      title: '3. Extreme-efficiency as a structural advantage',
       subtitle: '',
       content: `Learning~Adaptive inherits SciTheWorld's culture of extreme efficiency:
 • minimal human overhead,
@@ -580,7 +608,7 @@ Efficiency is not a cost tactic; it is a compounding investment advantage.`,
       image: ''
     },
     {
-      title: 'Federated architecture and IP protection',
+      title: '4. Federated architecture and IP protection',
       subtitle: '',
       content: `The Group's federated architecture protects intellectual property from individual dependency and staff rotation—mitigating the classic "star risk" of investment teams.
 Knowledge is institutionalized, not person-bound.
@@ -588,7 +616,7 @@ This enables long-term continuity without sacrificing innovation.`,
       image: ''
     },
     {
-      title: 'Collaboration-native by design',
+      title: '5. Collaboration-native by design',
       subtitle: '',
       content: `One of the consequences from being built upon federated technology is that Learning~Adaptive is structurally open to collaboration:
 • with universities,
@@ -599,7 +627,7 @@ Revenue sharing and co-development are not exceptions; they are native features 
       image: ''
     },
     {
-      title: 'Global, forward-looking intelligence',
+      title: '6. Global, forward-looking intelligence',
       subtitle: '',
       content: `Through SciTheWorld, Learning~Adaptive continuously absorbs privileged signal on:
 • where innovation is truly advancing,
@@ -612,7 +640,7 @@ This perspective spans companies, sectors, and nations—not just markets.`,
 
   collapsibleList2 = signal<CollapsibleItem[]>([
     {
-      title: 'Augmented Machines in investment',
+      title: '7. Augmented Machines in investment',
       subtitle: '',
       content: `Learning~Adaptive applies Augmented Machines technology:
 a disciplined combination of machine-generated signals and human judgment.
@@ -622,7 +650,7 @@ This is not discretionary vs. systematic—it is structured cooperation.`,
       image: ''
     },
     {
-      title: 'Ecosystem-level portfolios',
+      title: '8. Ecosystem-level portfolios',
       subtitle: '',
       content: `Learning~Adaptive can construct AI-native ecosystems of companies:
 • In private markets, portfolio companies are interconnected to unlock operational and strategic synergies.
@@ -631,14 +659,14 @@ Capital, technology, and governance interact.`,
       image: ''
     },
     {
-      title: 'Model aggregation at scale',
+      title: '9. Model aggregation at scale',
       subtitle: '',
       content: `Beyond advanced, competed strategies, Learning~Adaptive can also exploit a large space of low-risk, low-return patterns by being able to manage models efficiently.
 Just as high-frequency trading compounds small edges through volume, Learning~Adaptive compounds many modest, robust models—a greenfield made accessible only through extreme operational efficiency.`,
       image: ''
     },
     {
-      title: 'Open collaboration and revenue sharing',
+      title: '10. Open collaboration and revenue sharing',
       subtitle: '',
       content: `The vehicle can collaborate with:
 • external managers,
@@ -649,13 +677,13 @@ This flexibility is a direct consequence of its architecture-first design.`,
       image: ''
     },
     {
-      title: 'Strategic flow from algorithmic treasuries',
+      title: '11. Strategic flow from algorithmic treasuries',
       subtitle: '',
       content: `As companies adopt Algorithmization through SciTheWorld, algorithmic treasury flows naturally emerge from a number of industries—creating aligned, high-quality investment opportunities for Learning~Adaptive.`,
       image: ''
     },
     {
-      title: '... And many more',
+      title: '12. ... And many more',
       subtitle: '',
       content: `Arising from participation in a Group structured to act as a long-term opportunity-generating asset.`,
       image: ''
@@ -778,8 +806,8 @@ This flexibility is a direct consequence of its architecture-first design.`,
       backgroundColor: '#1D3557',
       textColor: '#ffffff',
       customContent: `
-                                                <p>
-          EPAs are custom deeptech that seats on top of our clients’ departamental PAs(legacies) so that they can unlock their algorithmic nature.They gradually build up the clients operating systems upon which any use case is built and, more interestingly, controlled at ease.
+           <p>
+          <em>[ EPAs are custom deeptech that seats on top of our clients’ departamental PAs(legacies) so that they can unlock their algorithmic nature.They gradually build up the clients operating systems upon which any use case is built and, more interestingly, controlled at ease. ]</em>
         </p>
     `
     },

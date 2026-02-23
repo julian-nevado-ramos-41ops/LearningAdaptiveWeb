@@ -140,9 +140,9 @@
       top: 100%;
       left: 50%;
       transform: translateX(-50%) translateY(10px);
-      background-color: var(--nav-bg, rgba(48, 48, 48, 0.95));
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--nav-border-color, rgba(255, 255, 255, 0.1));
+      background-color: #000000;
+      backdrop-filter: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 12px;
       padding: 0.75rem;
       list-style: none;
@@ -170,7 +170,7 @@
     .dropdown-link {
       display: block;
       padding: 0.75rem 1rem;
-      color: var(--nav-text-color, #f4f2ee);
+      color: #ffffff;
       text-decoration: none;
       font-size: 1rem;
       border-radius: 8px;

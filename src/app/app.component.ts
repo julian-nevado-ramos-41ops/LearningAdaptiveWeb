@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, viewChild, computed } from '@angular/core';
 import { HeroComponent } from './components/hero/hero.component';
-import { SectionsContainerComponent } from './components/sections-container copy/sections-container.component';
-import { SectionComponent } from './components/section copy/section.component';
+import { SectionsContainerComponent } from './components/sections-container/sections-container.component';
+import { SectionComponent } from './components/section/section.component';
 import { AwardsListComponent } from './components/awards-list/awards-list.component';
 import { LogoCarouselComponent } from './components/logo-carousel/logo-carousel.component';
 import { NavBarComponent, NavCommand } from './components/nav-bar/nav-bar.component';

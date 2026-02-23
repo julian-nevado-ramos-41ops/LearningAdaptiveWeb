@@ -17,6 +17,7 @@ import { CookieBannerComponent } from './components/cookie-banner/cookie-banner.
 import { CollapsibleListComponent, CollapsibleItem } from './components/collapsible-list/collapsible-list.component';
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { AccordionComponent } from './components/accordion/accordion.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 interface SectionData {
   id: number;
@@ -55,6 +56,7 @@ interface SectionData {
     ContactUsComponent,
     HudOverlayComponent,
     CookieBannerComponent,
+    FooterComponent,
   ],
   template: `
     <app-preloader />
@@ -147,9 +149,7 @@ interface SectionData {
 
     <app-contact-us id="contact" />
 
-    <footer class="footer">
-      <p>&copy; 2026 SciTheWorld. All rights reserved.</p>
-    </footer>
+    <app-footer />
 
     <app-cookie-banner />
 
@@ -254,18 +254,6 @@ interface SectionData {
         max-width: 100%;
         line-height: 1.5;
       }
-    }
-
-    .footer {
-      width: 100%;
-      padding: 4rem 5%;
-      text-align: left;
-      color: rgba(255, 255, 255, 0.6);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
-      scroll-snap-align: start;
-      box-sizing: border-box;
-      background-color: #0d0d0d;
     }
 
     /* ─── Modal ─── */

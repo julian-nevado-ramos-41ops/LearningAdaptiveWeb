@@ -28,6 +28,12 @@ import { Component, ChangeDetectionStrategy, signal, afterNextRender, OnDestroy 
       transition: transform 0.10s cubic-bezier(0.2, 0, 0.2, 1);
     }
 
+    @media (max-width: 1024px) {
+      :host {
+        display: none;
+      }
+    }
+
     .crosshair-v,
     .crosshair-h {
       position: absolute;

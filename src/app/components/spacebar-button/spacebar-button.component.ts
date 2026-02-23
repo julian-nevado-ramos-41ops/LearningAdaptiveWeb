@@ -1,11 +1,14 @@
 import {
   Component,
   ChangeDetectionStrategy,
+  input,
   output,
   signal,
   afterNextRender,
   OnDestroy,
   ElementRef,
+  numberAttribute,
+  booleanAttribute,
 } from '@angular/core';
 
 @Component({
@@ -24,6 +27,7 @@ import {
   styleUrl: './spacebar_button_styles.css',
 })
 export class SpacebarButtonComponent implements OnDestroy {
+  isActive = input(true, { transform: booleanAttribute });
   pressed = output<void>();
 
   isPressed = signal(false);
@@ -71,7 +75,8 @@ export class SpacebarButtonComponent implements OnDestroy {
     }
     if (!el) return false;
     const rect = el.getBoundingClientRect();
-    return rect.top < window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.5;
+    const isContainerInView = rect.top < window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.5;
+    return isContainerInView && this.isActive();
   }
 
   gradientTransform() {

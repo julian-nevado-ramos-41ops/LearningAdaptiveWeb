@@ -59,7 +59,10 @@ import { SpacebarButtonComponent } from '../spacebar-button/spacebar-button.comp
       @if (totalSections() > 0) {
         <app-side-nav [totalSections]="totalSections()" [currentSection]="globalCurrentSection()" (sectionClicked)="navigate.emit($event)" />
         @if (sectionIndex() < totalSections() - 1) {
-          <app-spacebar-button (pressed)="nextSection.emit()" />
+          <app-spacebar-button 
+            [isActive]="globalCurrentSection() === sectionIndex()" 
+            (pressed)="nextSection.emit()" 
+          />
         }
       }
     </div>

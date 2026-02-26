@@ -219,8 +219,19 @@ This flexibility is a direct consequence of its architecture-first design.`,
 
     /* ── Cookie Banner ── */
     cookieBanner: {
-        text: 'We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.',
-        accept: 'Accept',
+        title: 'Cookie settings',
+        text: 'Our website uses cookies to distinguish you from other users. This helps us to provide you with a more personalized experience when you browse our site and also allows us to improve it. You can choose not to allow some types of cookies.',
+        customizeBtn: 'Customize cookies',
+        rejectBtn: 'Reject all',
+        acceptBtn: 'Accept all',
+        saveBtn: 'Save preferences',
+        categories: {
+            necessary: { name: 'Necessary', description: 'Enable basic security and functionality.', label: 'Required' },
+            analytics: { name: 'Analytics', description: 'Allow site performance tracking.' },
+            marketing: { name: 'Marketing', description: 'Enable ad personalization and tracking.' }
+        },
+        on: 'On',
+        off: 'Off'
     },
 
     /* ── Modal ── */

@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, signal, viewChild, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, viewChild, computed, inject } from '@angular/core';
+import { TranslationService } from './i18n';
 import { HeroComponent } from './components/hero/hero.component';
 import { SectionsContainerComponent } from './components/sections-container/sections-container.component';
 import { SectionComponent } from './components/section/section.component';
@@ -73,8 +74,8 @@ interface SectionData {
     />
 
     <app-hero 
-      title="Proprietary investment opportunities" 
-      subtitle="LEARNING~ADAPTIVE" 
+      [title]="ts.t().hero.title" 
+      [subtitle]="ts.t().hero.subtitle" 
       [showBrackets]="true"
       bracketsColor="var(--color-1)"
       subtitleColor="gray"
@@ -82,28 +83,27 @@ interface SectionData {
     />
 
     <app-part-stw
-      titleHtml="Part of <u>SciTheWorld</u>"
-      [description]="partStwDescription"
+      [titleHtml]="ts.t().partStw.titleHtml"
+      [description]="ts.t().partStw.description"
     />
 
     <app-accordion
       id="accordion"
       mode="scroll"
       [cards]="accordionItems()"
-      sectionTitle="THE NAME"
-      sectionSubtitle="The name Learning~Adaptive is not symbolic. It is literal.
-"
+      [sectionTitle]="ts.t().accordion.sectionTitle"
+      [sectionSubtitle]="ts.t().accordion.sectionSubtitle"
     />
 
     <div class="papers-block" id="papers">
-      <app-papers-list [papers]="papers()" />
+      <app-papers-list [papers]="papers()" [title]="ts.t().papers.title" [subtitle]="ts.t().papers.subtitle" />
     </div>
 
     <div class="kpis-block" id="kpis">
       <app-kpis
         [kpis]="kpisData()"
-        title="KPIs"
-        subtitle="A LONG RUN PROJECT"
+        [title]="ts.t().kpis.title"
+        [subtitle]="ts.t().kpis.subtitle"
       />
     </div>
 
@@ -137,7 +137,7 @@ interface SectionData {
                   <app-collapsible-list [items]="collapsibleList2()" (requestModal)="openModal({title: $event.title, content: $event.content, color: section.backgroundColor})" style="width: 100%;" />
                 </div>
             } @else if (section.customContent === 'collapsible-3') {
-                <p class="section-quote-paragraph"><em>[ Learning~Adaptive is an investment vehicle built on applied science and AI-native infrastructure, designed to deliver long-term capital compounding through structural efficiency and a continuous creation of optionality upon SciTheWorld Group. ]</em></p>
+                <p class="section-quote-paragraph"><em>{{ ts.t().sectionQuote }}</em></p>
             }
         </app-section>
       }
@@ -164,19 +164,19 @@ interface SectionData {
                 <div class="modal-actions">
                   @if (currentModalData()?.prompt) {
                     <div class="prompt-section">
-                      <span class="action-label">First, copy the prompt:</span>
+                      <span class="action-label">{{ ts.t().modal.copyPromptLabel }}</span>
                       <button class="copy-btn" (click)="copyPrompt(currentModalData()!.prompt!)">
                         @if (copied()) {
-                          <span class="copy-icon">✓</span> Copied!
+                          <span class="copy-icon">✓</span> {{ ts.t().modal.copiedButton }}
                         } @else {
-                          <span class="copy-icon">📋</span> Copy prompt
+                          <span class="copy-icon">📋</span> {{ ts.t().modal.copyButton }}
                         }
                       </button>
                     </div>
                   }
                   @if (currentModalData()?.llmLinks?.length) {
                     <div class="llm-section">
-                      <span class="action-label">Then, check on the different LLMs:</span>
+                      <span class="action-label">{{ ts.t().modal.llmLabel }}</span>
                       <div class="llm-buttons">
                         @for (link of currentModalData()!.llmLinks!; track link.label) {
                           <button class="llm-btn" (click)="openLlmLink(link.url)">{{ link.label }}</button>
@@ -456,6 +456,7 @@ interface SectionData {
   `],
 })
 export class AppComponent {
+  readonly ts = inject(TranslationService);
   currentSection = signal(0);
 
   modalVisible = signal(false);
@@ -482,201 +483,44 @@ export class AppComponent {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
-  navItems = signal<NavCommand[]>([
-    { label: 'THE NAME', link: '#accordion' },
-    { label: 'PAPERS', link: '#papers' },
-    { label: 'KPIS', link: '#kpis' },
-    { label: 'ABOUT US', link: '#horizontal-collapsible' },
-    { label: 'AWARDS', link: '#awards' },
-    {
-      label: 'THE GROUP', children: [
-        { label: 'SciTheWorld', link: 'https://scitheworld.com' },
-        { label: 'Algorithmization', link: 'https://algorithmization.com' },
-        { label: 'SystematicMe', link: 'https://systematicme.com' },
-        { label: '41OPS', link: 'https://41ops.com' }
-      ]
-    },
-    { label: 'CONTACT', link: '#contact' }
-  ]);
+  navItems = computed<NavCommand[]>(() => this.ts.t().nav as NavCommand[]);
 
-  /* ── Part STW Content ── */
-  partStwDescription = `<p>We are an investment spin-off from SciTheWorld:</p>
-<ol>
-  <li>SciTheWorld was built to create applied science, proprietary technology, and extreme efficiency. Learning~Adaptive exists to professionally invest the capital generated by that effort, following the same discipline that governed its creation.</li>
-  <li>It is a venture tech investment of the Group: first operating as a family office, and—once fully proven by its own capital—progressively opening to third-party mandates.</li>
-</ol>`;
+  /* ── Part STW Content — now driven by TranslationService ── */
 
-  /* ── Accordion Data (2 blocks) ── */
-  accordionItems = signal<any[]>([
-    {
-      title: 'AN EARLY CAREER',
-      description: `It refers to Sergio Álvarez-Teleña's pioneering work on algorithmic trading, first formalized in 2012 as a book "Trading 2.0: Learning~Adaptive Machines" —a body of work that later became the foundation of his PhD thesis at University College London (Computer Science).\nThe thesis was supervised within an environment closely connected to the most demanding standards of quantitative finance, including leadership linked to Renaissance Technologies—a firm long admired for its rigor and results.`,
-      images: [
-        { src: 'img/book2.jpg', alt: 'Book', class: 'grayscale-hover first-card-small' }
-      ]
-    },
-    {
-      title: 'A PRIVILEGED TECH',
-      description: `The name reflects continuity of thought and a cold, disciplined commitment to reaching the highest standards—pursued relentlessly since 2012 and achieving all sorts of recognitions and awards ever since.`,
-      images: [
-        { src: 'img/sergio_receiving_prize.jpg', alt: 'Sergio receiving prize', class: 'grayscale-hover' }
-      ]
-    }
-  ]);
+  /* ── Accordion Data (2 blocks) — images are static, text from service ── */
+  private accordionImages = [
+    [{ src: 'img/book2.jpg', alt: 'Book', class: 'grayscale-hover first-card-small' }],
+    [{ src: 'img/sergio_receiving_prize.jpg', alt: 'Sergio receiving prize', class: 'grayscale-hover' }],
+  ];
+  accordionItems = computed(() => this.ts.t().accordion.cards.map((card, i) => ({
+    ...card,
+    images: this.accordionImages[i] || []
+  })));
 
   /* ── KPIs Content ── */
-  kpisData = signal<KPI[]>([
-    { value: '200%+', description: 'P&L at Santander’s Structured Notes within two years.' },
-    { value: '400%+', description: 'P&L at Morgan Stanley’s Custom Indices within a year.' },
-    { value: '38% & 84%', description: 'returns while bootstrapping SciTheWorld during COVID.' },
-    { value: '€1Billion+', description: 'invested by a tier one bank upon our technology.' }
-  ]);
+  kpisData = computed<KPI[]>(() => this.ts.t().kpis.items);
 
   /* ── Horizontal Sections with Collapsible Lists ── */
-  horizontalSectionsStructure = signal<SectionData[]>([
-    {
-      id: 1,
-      title: 'A unique investment infrastructure',
-      subtitle: '',
-      backgroundColor: 'rgb(76, 214, 188)',
-      customContent: 'collapsible-1'
-    },
-    {
-      id: 2,
-      title: 'A unique investment infrastructure',
-      subtitle: '',
-      backgroundColor: 'rgb(76, 214, 188)',
-      customContent: 'collapsible-2'
-    },
-    {
-      id: 3,
-      title: 'In one sentence',
-      subtitle: '',
-      backgroundColor: '#FD5F65',
-      customContent: 'collapsible-3'
-    },
-  ]);
+  private horizontalSectionsMeta: Omit<SectionData, 'title' | 'subtitle'>[] = [
+    { id: 1, backgroundColor: 'rgb(76, 214, 188)', customContent: 'collapsible-1' },
+    { id: 2, backgroundColor: 'rgb(76, 214, 188)', customContent: 'collapsible-2' },
+    { id: 3, backgroundColor: '#FD5F65', customContent: 'collapsible-3' },
+  ];
+  horizontalSectionsStructure = computed<SectionData[]>(() =>
+    this.ts.t().horizontalSectionsStructure.map((t, i) => ({
+      ...this.horizontalSectionsMeta[i],
+      title: t.title,
+      subtitle: t.subtitle,
+    } as SectionData))
+  );
 
-  collapsibleList1 = signal<CollapsibleItem[]>([
-    {
-      title: '1. Public markets — Alpha Dynamics',
-      subtitle: '',
-      content: `For liquid markets, Learning~Adaptive leverages Alpha Dynamics, SciTheWorld's AI-native investment platform. Alpha Dynamics spans:
-• algorithmic portfolio construction,
-• algorithmic execution,
-• algorithmic market making,
-• and algorithmic risk management,
-as formalized in SciTheWorld's trilogy of papers on modern investment management.
-This is not tooling layered on top of legacy processes; it is investment infrastructure designed from algorithmic first principles.`,
-      image: ''
-    },
-    {
-      title: '2. Private markets — Fractal',
-      subtitle: '',
-      content: `In private markets, Learning~Adaptive goes beyond capital allocation.
-By leveraging Fractal, SciTheWorld's End-to-End, AI-first corporate technology, it can:
-• actively turbo-boost portfolio companies,
-• accelerate their AI-native transformation,
-• and unlock synergies across investments within the portfolio.
-Private investments are not treated as isolated positions, but as interacting components of a system.`,
-      image: ''
-    },
-    {
-      title: '3. Extreme-efficiency as a structural advantage',
-      subtitle: '',
-      content: `Learning~Adaptive inherits SciTheWorld's culture of extreme efficiency:
-• minimal human overhead,
-• AI-native operations,
-• architecture-first design.
-This allows the vehicle to:
-• reinvest continuously in innovation,
-• protect fund margins,
-• and avoid fee inflation driven by operational bloat.
-Efficiency is not a cost tactic; it is a compounding investment advantage.`,
-      image: ''
-    },
-    {
-      title: '4. Federated architecture and IP protection',
-      subtitle: '',
-      content: `The Group's federated architecture protects intellectual property from individual dependency and staff rotation—mitigating the classic "star risk" of investment teams.
-Knowledge is institutionalized, not person-bound.
-This enables long-term continuity without sacrificing innovation.`,
-      image: ''
-    },
-    {
-      title: '5. Collaboration-native by design',
-      subtitle: '',
-      content: `One of the consequences from being built upon federated technology is that Learning~Adaptive is structurally open to collaboration:
-• with universities,
-• asset managers,
-• sector associations,
-• and specialized partners.
-Revenue sharing and co-development are not exceptions; they are native features of the architecture.`,
-      image: ''
-    },
-    {
-      title: '6. Global, forward-looking intelligence',
-      subtitle: '',
-      content: `Through SciTheWorld, Learning~Adaptive continuously absorbs privileged signal on:
-• where innovation is truly advancing,
-• which sectors are structurally lagging,
-• and where systemic risk is accumulating.
-This perspective spans companies, sectors, and nations—not just markets.`,
-      image: ''
-    },
-  ]);
+  collapsibleList1 = computed<CollapsibleItem[]>(() =>
+    this.ts.t().collapsibleList1.map(item => ({ ...item, subtitle: '', image: '' }))
+  );
 
-  collapsibleList2 = signal<CollapsibleItem[]>([
-    {
-      title: '7. Augmented Machines in investment',
-      subtitle: '',
-      content: `Learning~Adaptive applies Augmented Machines technology:
-a disciplined combination of machine-generated signals and human judgment.
-Machines optimize scale and precision.
-Humans arbitrate context, regime change, and risk.
-This is not discretionary vs. systematic—it is structured cooperation.`,
-      image: ''
-    },
-    {
-      title: '8. Ecosystem-level portfolios',
-      subtitle: '',
-      content: `Learning~Adaptive can construct AI-native ecosystems of companies:
-• In private markets, portfolio companies are interconnected to unlock operational and strategic synergies.
-• In public markets, especially in small caps, boards and executives can be actively trained—often in collaboration with SystematicMe—to improve innovation-driven decision-making.
-Capital, technology, and governance interact.`,
-      image: ''
-    },
-    {
-      title: '9. Model aggregation at scale',
-      subtitle: '',
-      content: `Beyond advanced, competed strategies, Learning~Adaptive can also exploit a large space of low-risk, low-return patterns by being able to manage models efficiently.
-Just as high-frequency trading compounds small edges through volume, Learning~Adaptive compounds many modest, robust models—a greenfield made accessible only through extreme operational efficiency.`,
-      image: ''
-    },
-    {
-      title: '10. Open collaboration and revenue sharing',
-      subtitle: '',
-      content: `The vehicle can collaborate with:
-• external managers,
-• research groups,
-• industry partners,
-sharing revenues where appropriate.
-This flexibility is a direct consequence of its architecture-first design.`,
-      image: ''
-    },
-    {
-      title: '11. Strategic flow from algorithmic treasuries',
-      subtitle: '',
-      content: `As companies adopt Algorithmization through SciTheWorld, algorithmic treasury flows naturally emerge from a number of industries—creating aligned, high-quality investment opportunities for Learning~Adaptive.`,
-      image: ''
-    },
-    {
-      title: '12. ... And many more',
-      subtitle: '',
-      content: `Arising from participation in a Group structured to act as a long-term opportunity-generating asset.`,
-      image: ''
-    },
-  ]);
+  collapsibleList2 = computed<CollapsibleItem[]>(() =>
+    this.ts.t().collapsibleList2.map(item => ({ ...item, subtitle: '', image: '' }))
+  );
 
   /* ── Computed halves for 2-column layout ── */
   collapsibleList1Half1 = computed(() => {

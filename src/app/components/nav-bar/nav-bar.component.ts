@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, input, computed, signal, HostListener, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, signal, HostListener, PLATFORM_ID, Inject, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { TranslationService } from '../../i18n';
 
 export interface NavCommand {
     label: string;
@@ -53,6 +54,8 @@ export class NavBarComponent {
     private accumulatedDelta = 0;
     private readonly SCROLL_THRESHOLD = 150; // Pixels to scroll to trigger change
     private readonly TOP_THRESHOLD = 50; // Always show if closer to top than this
+
+    readonly ts = inject(TranslationService);
 
     constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
 

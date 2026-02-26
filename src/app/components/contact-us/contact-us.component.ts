@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TranslationService } from '../../i18n';
 
 @Component({
     selector: 'app-contact-us',
@@ -19,6 +20,8 @@ export class ContactUsComponent {
     // Theme customization if needed
     backgroundColor = input<string>('#0d0d0d');
     textColor = input<string>('#ffffff');
+
+    readonly ts = inject(TranslationService);
 
     constructor(private sanitizer: DomSanitizer) { }
 

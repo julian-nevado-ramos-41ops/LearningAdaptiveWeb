@@ -33,13 +33,20 @@ export class SpacebarButtonComponent implements OnDestroy {
   isPressed = signal(false);
   private pressTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly ANIMATION_DURATION = 1000;
+  private isHandlingPress = false;
 
   private keydownHandler = (event: KeyboardEvent) => {
     if (event.code === 'Space') {
-      // Only respond if this button's parent container is in view
-      if (!this.isInView()) return;
+      // Si este botón inició la pulsación actual, seguir previniendo el scroll
+      if (this.isHandlingPress && event.repeat) {
+        event.preventDefault();
+        return;
+      }
+      // Solo responder si esta sección es la activa y el contenedor está visible
+      if (!this.isCurrentSection() || !this.isInView()) return;
       event.preventDefault();
       if (!event.repeat) {
+        this.isHandlingPress = true;
         this.startPress(event);
       }
     }
@@ -47,6 +54,7 @@ export class SpacebarButtonComponent implements OnDestroy {
 
   private keyupHandler = (event: KeyboardEvent) => {
     if (event.code === 'Space') {
+      this.isHandlingPress = false;
       this.cancelPress();
     }
   };
@@ -77,6 +85,24 @@ export class SpacebarButtonComponent implements OnDestroy {
     const rect = el.getBoundingClientRect();
     const isContainerInView = rect.top < window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.5;
     return isContainerInView && this.isActive();
+  }
+
+  private isCurrentSection(): boolean {
+    let sectionEl: HTMLElement | null = this.elementRef.nativeElement;
+    while (sectionEl && sectionEl.tagName !== 'APP-SECTION') {
+      sectionEl = sectionEl.parentElement;
+    }
+    if (!sectionEl) return false;
+    let containerEl: HTMLElement | null = sectionEl;
+    while (containerEl && containerEl.tagName !== 'APP-SECTIONS-CONTAINER') {
+      containerEl = containerEl.parentElement;
+    }
+    if (!containerEl) return false;
+    const sections = Array.from(containerEl.querySelectorAll(':scope > * app-section, :scope > app-section'));
+    const myIndex = sections.indexOf(sectionEl);
+    const visibleIndex = sections.findIndex(s => s.classList.contains('visible'));
+
+    return myIndex === visibleIndex;
   }
 
   gradientTransform() {

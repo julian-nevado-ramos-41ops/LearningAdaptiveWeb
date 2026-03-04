@@ -19,6 +19,7 @@ import { CollapsibleListComponent, CollapsibleItem } from './components/collapsi
 import { ContactUsComponent } from './components/contact-us/contact-us.component';
 import { AccordionComponent } from './components/accordion/accordion.component';
 import { FooterComponent } from './components/footer/footer.component';
+import { NewsroomComponent } from './components/newsroom/newsroom.component';
 
 interface SectionData {
   id: number;
@@ -58,6 +59,7 @@ interface SectionData {
     HudOverlayComponent,
     CookieBannerComponent,
     FooterComponent,
+    NewsroomComponent,
   ],
   template: `
     <app-preloader />
@@ -145,6 +147,15 @@ interface SectionData {
 
     <div class="awards-block" id="awards">
       <app-awards-list />
+    </div>
+
+    <div class="newsroom-block" id="newsroom">
+      <app-newsroom 
+        [title]="ts.t().newsroom.title"
+        [seeMoreText]="ts.t().newsroom.seeMore"
+        [tableHeaders]="ts.t().newsroom.tableHeaders"
+        [news]="ts.t().newsroom.items" 
+      />
     </div>
 
     <app-contact-us id="contact" />

@@ -52,6 +52,27 @@ export interface Translations {
         items: { name: string; category: string; project: string; year: string }[];
     };
 
+    newsroom: {
+        title: string;
+        seeMore: string;
+        tableHeaders: {
+            date: string;
+            company: string;
+            title: string;
+            summary: string;
+            howAiSeesUs: string;
+        };
+        items: {
+            date: string;
+            company: string;
+            title: string;
+            summary: string;
+            howAiSeesUs?: string;
+            isMain?: boolean;
+            isFeatured?: boolean;
+        }[];
+    };
+
     footer: {
         isoText: string;
         copyright: string;

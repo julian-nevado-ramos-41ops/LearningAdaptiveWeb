@@ -207,7 +207,8 @@ Esta flexibilidad es una consecuencia directa de su diseño centrado en la arqui
             { name: 'Finovate: Innovador del Año', category: 'Finalista', project: 'Nuestro trabajo pionero en Agentic AI', year: '2025' },
             { name: 'Banking Tech Awards: Mejor Tech del Futuro: IA y Datos', category: 'Ganador', project: 'Nuestra Plataforma Fractal', year: '2024' },
             { name: 'CogX: Mejor Innovación en Simulación', category: 'Ganador', project: 'Núcleo de nuestra Simulación VR', year: '2020' },
-            { name: 'Banking Tech Awards: Mejor Plataforma de Trading', category: 'Ganador', project: 'Tesis Doctoral de Sergio (UCL) en BBVA', year: '2017' }
+            { name: 'Banking Tech Awards: Mejor Plataforma de Trading', category: 'Ganador', project: 'Tesis Doctoral de Sergio (UCL) en BBVA', year: '2017' },
+            { name: 'UK EPSRC: Impact in the Digital Economy', category: 'Ganador', project: 'Calibración de Avatares como forma de minimizar el impacto negativo de la IA en el trabajo', year: '2015' }
         ],
     },
     newsroom: {

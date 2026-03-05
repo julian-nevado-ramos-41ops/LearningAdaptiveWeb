@@ -202,7 +202,8 @@ This flexibility is a direct consequence of its architecture-first design.`,
             { name: 'Finovate: Innovator of the Year', category: 'Finalist', project: 'Our pioneer work on Agentic AI', year: '2025' },
             { name: 'Bankig Tech Awards: Best Tech of the Future: AI and Data', category: 'Winner', project: 'Our Fractal Platform', year: '2024' },
             { name: 'CogX: Best Innovation in Simulation', category: 'Winner', project: 'Core of our Virtual Reality Simulation', year: '2020' },
-            { name: 'Banking Tech Awards: Best Trading Platform', category: 'Winner', project: 'Sergio`s UCL PhD Thesis at BBVA', year: '2017' }
+            { name: 'Banking Tech Awards: Best Trading Platform', category: 'Winner', project: 'Sergio`s UCL PhD Thesis at BBVA', year: '2017' },
+            { name: 'UK EPSRC: Impact in the Digital Economy', category: 'Winner', project: 'Avatar Calibration as a way to minimize AI\'s negative impact in labour', year: '2015' }
         ],
     },
     newsroom: {

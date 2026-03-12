@@ -958,7 +958,7 @@ export class AppComponent {
 
   papers = signal<Paper[]>([
     {
-      Title: "Data MAPS: On-Platform Organisations",
+      Title: "Data MAPs: On-Platform Organisations",
       Link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4232955",
       Pages: "107",
       Date: "15/10/2022"

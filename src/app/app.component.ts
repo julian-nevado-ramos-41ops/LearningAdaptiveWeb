@@ -976,7 +976,7 @@ export class AppComponent {
       Date: "10/01/2023"
     },
     {
-      Title: "Advances in Portfolio Management: On-Platform Governance for Portfolio Managers [Trilogy 3/3]",
+      Title: "Advances in Portfolio Management: On-Platform Governance for Portfolio Managers [Trilogy - 3/3]",
       Link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4321554",
       Pages: "3",
       Date: "10/01/2023"

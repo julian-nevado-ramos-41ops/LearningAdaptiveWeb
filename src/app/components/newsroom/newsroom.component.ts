@@ -121,7 +121,7 @@ export interface NewsItem {
       width: 100%;
       max-width: 100vw;
       overflow-x: hidden;
-      padding: 4rem 5%;
+      padding: 4rem 5% 7rem 5%;
       font-family: 'Inter', sans-serif;
       color: #222;
       background-color: transparent;

@@ -1034,6 +1034,12 @@ export class AppComponent {
       Link: "https://arxiv.org/abs/2512.24856",
       Pages: "55",
       Date: "31/12/2025"
+    },
+    {
+      Title: "Advances in Art: Orthogonal Disruption and the Beauty in Schematics",
+      Link: "https://arxiv.org/abs/2604.20865",
+      Pages: "11",
+      Date: "24/03/2026"
     }
   ]);
 
